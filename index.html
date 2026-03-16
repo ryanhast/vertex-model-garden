@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vertex AI — Model Garden</title>
+
+<script type="importmap">
+{
+  "imports": {
+    "@material/web/": "https://esm.run/@material/web/"
+  }
+}
+</script>
+<script type="module">
+  import '@material/web/all.js';
+</script>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&family=Google+Sans+Text:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Mono:wght@400;500&display=swap">
+<!-- Material Symbols removed — using text labels instead -->
+
+<style>
+/* ─── RESET & ROOT ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --md-ref-typeface-brand: 'Fraunces', serif;
+  --md-ref-typeface-plain: 'Google Sans Text', sans-serif;
+  --md-ref-typeface-mono: 'Google Sans Mono', monospace;
+
+  --md-sys-shape-corner-none: 0px;
+  --md-sys-shape-corner-extra-small: 4px;
+  --md-sys-shape-corner-small: 8px;
+  --md-sys-shape-corner-medium: 12px;
+  --md-sys-shape-corner-large: 16px;
+  --md-sys-shape-corner-extra-large: 28px;
+  --md-sys-shape-corner-full: 9999px;
+
+  /* Color scheme — Sage Green source, light mode */
+  --md-sys-color-primary: #3A6B4C;
+  --md-sys-color-on-primary: #FFFFFF;
+  --md-sys-color-primary-container: #C1EDCC;
+  --md-sys-color-on-primary-container: #0D2818;
+  --md-sys-color-secondary: #6B7B6F;
+  --md-sys-color-on-secondary: #FFFFFF;
+  --md-sys-color-secondary-container: #D6E6D8;
+  --md-sys-color-on-secondary-container: #1A2E1F;
+  --md-sys-color-tertiary: #4A7080;
+  --md-sys-color-on-tertiary: #FFFFFF;
+  --md-sys-color-tertiary-container: #CCE7F4;
+  --md-sys-color-on-tertiary-container: #0A1F29;
+  --md-sys-color-error: #C4442B;
+  --md-sys-color-on-error: #FFFFFF;
+  --md-sys-color-error-container: #FDDAD2;
+  --md-sys-color-on-error-container: #3B0907;
+  --md-sys-color-background: #F6FAF6;
+  --md-sys-color-on-background: #1A1C1A;
+  --md-sys-color-surface: #FAFEFA;
+  --md-sys-color-on-surface: #1A1C1A;
+  --md-sys-color-surface-variant: #DDE5DD;
+  --md-sys-color-on-surface-variant: #414942;
+  --md-sys-color-surface-container-lowest: #FFFFFF;
+  --md-sys-color-surface-container-low: #EFF5EF;
+  --md-sys-color-surface-container: #E6ECE6;
+  --md-sys-color-surface-container-high: #DEE4DE;
+  --md-sys-color-surface-container-highest: #D6DCD6;
+  --md-sys-color-outline: #717971;
+  --md-sys-color-outline-variant: #C0C9C0;
+  --md-sys-color-inverse-surface: #2F312F;
+  --md-sys-color-inverse-on-surface: #F0F1EE;
+  --md-sys-color-inverse-primary: #93D8A2;
+  --md-sys-color-scrim: #000000;
+
+  /* M3 motion tokens — full set */
+  --motion-easing-standard: cubic-bezier(0.2, 0.0, 0, 1.0);
+  --motion-easing-standard-decelerate: cubic-bezier(0.0, 0.0, 0, 1.0);
+  --motion-easing-standard-accelerate: cubic-bezier(0.3, 0.0, 1, 1.0);
+  --motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1.0);
+  --motion-easing-enter: cubic-bezier(0.05, 0.7, 0.1, 1.0);
+  --motion-easing-exit: cubic-bezier(0.3, 0.0, 0.8, 0.15);
+  /* Spring-like: high initial velocity, rapid settle */
+  --motion-easing-spring: cubic-bezier(0.0, 0.7, 0.1, 1.0);
+  /* Duration tokens */
+  --motion-duration-short1: 50ms;
+  --motion-duration-short2: 100ms;
+  --motion-duration-short3: 150ms;
+  --motion-duration-short4: 200ms;
+  --motion-duration-medium1: 250ms;
+  --motion-duration-medium2: 300ms;
+  --motion-duration-medium3: 350ms;
+  --motion-duration-medium4: 400ms;
+
+  --provider-google: #3A6B4C;
+  --provider-anthropic: #6B5744;
+  --provider-meta: #4A6B5C;
+  --provider-mistral: #7B6B3A;
+  --provider-ai21: #5A5C6B;
+  --provider-cohere: #3A6B65;
+  --provider-stability: #5C4A6B;
+  --provider-open: #555B55;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --md-sys-color-primary: #93D8A2;
+    --md-sys-color-on-primary: #003919;
+    --md-sys-color-primary-container: #1A5230;
+    --md-sys-color-on-primary-container: #C1EDCC;
+    --md-sys-color-secondary: #BACABD;
+    --md-sys-color-on-secondary: #253529;
+    --md-sys-color-secondary-container: #3B4C3F;
+    --md-sys-color-on-secondary-container: #D6E6D8;
+    --md-sys-color-tertiary: #A4CDD9;
+    --md-sys-color-on-tertiary: #0B3541;
+    --md-sys-color-tertiary-container: #264C58;
+    --md-sys-color-on-tertiary-container: #CCE7F4;
+    --md-sys-color-error: #FFB4A6;
+    --md-sys-color-on-error: #5C1509;
+    --md-sys-color-error-container: #7F2B19;
+    --md-sys-color-on-error-container: #FDDAD2;
+    --md-sys-color-background: #111411;
+    --md-sys-color-on-background: #E1E3DE;
+    --md-sys-color-surface: #111411;
+    --md-sys-color-on-surface: #E1E3DE;
+    --md-sys-color-surface-variant: #414942;
+    --md-sys-color-on-surface-variant: #C0C9C0;
+    --md-sys-color-surface-container-lowest: #0C0F0C;
+    --md-sys-color-surface-container-low: #1A1C1A;
+    --md-sys-color-surface-container: #1E201E;
+    --md-sys-color-surface-container-high: #282A28;
+    --md-sys-color-surface-container-highest: #333533;
+    --md-sys-color-outline: #8B938B;
+    --md-sys-color-outline-variant: #414942;
+    --md-sys-color-inverse-surface: #E1E3DE;
+    --md-sys-color-inverse-on-surface: #2F312F;
+    --md-sys-color-inverse-primary: #3A6B4C;
+    --md-sys-color-scrim: #000000;
+  }
+}
+
+body {
+  font-family: var(--md-ref-typeface-plain);
+  background: var(--md-sys-color-background);
+  color: var(--md-sys-color-on-surface);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ─── MWC OVERRIDES — EXPRESSIVE ─── */
+md-filled-button,
+md-outlined-button,
+md-text-button,
+md-filled-tonal-button {
+  transition: transform var(--motion-duration-medium2) var(--motion-easing-spring);
+}
+md-filled-button:hover,
+md-outlined-button:hover,
+md-text-button:hover,
+md-filled-tonal-button:hover {
+  transform: scale(1.04);
+}
+md-filled-button:active,
+md-outlined-button:active,
+md-text-button:active,
+md-filled-tonal-button:active {
+  transform: scale(0.96);
+  transition: transform var(--motion-duration-short2) var(--motion-easing-standard);
+}
+md-filled-button:not(:hover),
+md-outlined-button:not(:hover),
+md-text-button:not(:hover),
+md-filled-tonal-button:not(:hover) {
+  transition: transform var(--motion-duration-medium3) var(--motion-easing-spring);
+}
+md-filled-button {
+  --md-filled-button-container-shape: var(--md-sys-shape-corner-full);
+  --md-filled-button-container-color: var(--md-sys-color-primary);
+  --md-filled-button-label-text-color: var(--md-sys-color-on-primary);
+  --md-filled-button-label-text-font: var(--md-ref-typeface-plain);
+  --md-filled-button-label-text-weight: 500;
+}
+md-filled-button:hover {
+  --md-filled-button-container-shape: var(--md-sys-shape-corner-extra-large);
+}
+md-outlined-button {
+  --md-outlined-button-container-shape: var(--md-sys-shape-corner-full);
+  --md-outlined-button-label-text-font: var(--md-ref-typeface-plain);
+  --md-outlined-button-outline-color: var(--md-sys-color-outline);
+}
+md-outlined-button:hover {
+  --md-outlined-button-container-shape: var(--md-sys-shape-corner-extra-large);
+}
+md-text-button {
+  --md-text-button-container-shape: var(--md-sys-shape-corner-full);
+  --md-text-button-label-text-font: var(--md-ref-typeface-plain);
+}
+md-text-button:hover {
+  --md-text-button-container-shape: var(--md-sys-shape-corner-extra-large);
+}
+md-filled-tonal-button {
+  --md-filled-tonal-button-container-shape: var(--md-sys-shape-corner-full);
+}
+md-filled-tonal-button:hover {
+  --md-filled-tonal-button-container-shape: var(--md-sys-shape-corner-extra-large);
+}
+md-filter-chip {
+  --md-filter-chip-container-shape: var(--md-sys-shape-corner-full);
+  --md-filter-chip-label-text-font: var(--md-ref-typeface-plain);
+  --md-filter-chip-label-text-size: 12px;
+  --md-filter-chip-label-text-weight: 500;
+  --md-filter-chip-selected-container-color: var(--md-sys-color-secondary-container);
+  --md-filter-chip-selected-label-text-color: var(--md-sys-color-on-secondary-container);
+  --md-filter-chip-outline-color: var(--md-sys-color-outline-variant);
+  --md-filter-chip-container-height: 32px;
+  flex-shrink: 0;
+  transition: transform var(--motion-duration-medium2) var(--motion-easing-spring);
+}
+md-filter-chip:hover {
+  --md-filter-chip-container-shape: var(--md-sys-shape-corner-large);
+}
+md-filter-chip:active {
+  transform: scale(0.96);
+  transition: transform var(--motion-duration-short2) var(--motion-easing-standard);
+}
+md-filter-chip:not(:hover) {
+  transition: transform var(--motion-duration-medium3) var(--motion-easing-spring);
+}
+md-outlined-text-field {
+  --md-outlined-text-field-container-shape: var(--md-sys-shape-corner-extra-small);
+  --md-outlined-text-field-input-text-font: var(--md-ref-typeface-plain);
+  --md-outlined-text-field-label-text-font: var(--md-ref-typeface-plain);
+}
+md-icon-button {
+  --md-icon-button-icon-color: var(--md-sys-color-on-surface-variant);
+}
+md-secondary-tab {
+  --md-secondary-tab-label-text-font: var(--md-ref-typeface-plain);
+  --md-secondary-tab-container-color: transparent;
+}
+
+/* ─── PAGE LOAD CHOREOGRAPHY ─── */
+@media (prefers-reduced-motion: no-preference) {
+  .anim-fade { opacity: 0; }
+  .anim-fade.visible { opacity: 1; transition: opacity var(--motion-duration-short4) var(--motion-easing-standard); }
+  .anim-slide-up { opacity: 0; transform: translateY(16px) scale(0.99); }
+  .anim-slide-up.visible { opacity: 1; transform: translateY(0) scale(1); transition: opacity var(--motion-duration-medium2) var(--motion-easing-spring), transform var(--motion-duration-medium4) var(--motion-easing-spring); }
+  .anim-slide-down { opacity: 0; transform: translateY(-10px); }
+  .anim-slide-down.visible { opacity: 1; transform: translateY(0); transition: opacity var(--motion-duration-medium1) var(--motion-easing-spring), transform var(--motion-duration-medium2) var(--motion-easing-spring); }
+  .anim-card { opacity: 0; transform: translateY(20px) scale(0.97); }
+  .anim-card.visible { opacity: 1; transform: translateY(0) scale(1); transition: opacity var(--motion-duration-medium3) var(--motion-easing-spring), transform var(--motion-duration-medium4) var(--motion-easing-spring); }
+}
+
+/* ─── NAVIGATION ─── */
+.top-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 64px;
+  background: var(--md-sys-color-surface);
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  transition: backdrop-filter 200ms var(--motion-easing-standard);
+}
+.top-nav.scrolled {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: color-mix(in srgb, var(--md-sys-color-surface) 85%, transparent);
+}
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+}
+.nav-wordmark {
+  font-family: var(--md-ref-typeface-brand);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--md-sys-color-on-surface);
+  letter-spacing: -0.3px;
+}
+.nav-divider {
+  font-size: 20px;
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 0 12px;
+  font-weight: 300;
+}
+.nav-subtitle {
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.nav-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 0 16px;
+  min-width: 0;
+}
+.nav-search-wrapper {
+  position: relative;
+  width: 400px;
+  flex-shrink: 1;
+  min-width: 200px;
+}
+.nav-search-input {
+  width: 100%;
+  height: 40px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-surface);
+  padding: 0 16px 0 40px;
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 14px;
+  color: var(--md-sys-color-on-surface);
+  outline: none;
+  transition: border-color 200ms var(--motion-easing-standard);
+}
+.nav-search-input::placeholder {
+  color: var(--md-sys-color-on-surface-variant);
+}
+.nav-search-input:focus {
+  border-color: var(--md-sys-color-primary);
+  outline: 1px solid var(--md-sys-color-primary);
+}
+.nav-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: var(--md-sys-color-on-surface-variant);
+  pointer-events: none;
+}
+
+.nav-avatar {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.avatar-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* ─── MASTHEAD ─── */
+.masthead {
+  margin-top: 64px;
+  padding: 32px 24px 24px;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.masthead-headline {
+  font-family: var(--md-ref-typeface-brand);
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--md-sys-color-on-surface);
+  letter-spacing: -0.5px;
+}
+.masthead-sub {
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-top: 8px;
+}
+.masthead-divider {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.masthead-divider hr {
+  border: none;
+  height: 1px;
+  background: var(--md-sys-color-outline-variant);
+}
+
+/* ─── FILTER BAR ─── */
+.filter-bar {
+  position: sticky;
+  top: 64px;
+  z-index: 90;
+  background: var(--md-sys-color-surface);
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.filter-bar::-webkit-scrollbar { display: none; }
+.filter-cluster {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.filter-cluster.category {
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-shrink: 0;
+}
+.filter-cluster.category::-webkit-scrollbar { display: none; }
+.filter-bar md-outlined-select {
+  --md-outlined-select-text-field-container-shape: var(--md-sys-shape-corner-full);
+  min-width: 120px;
+}
+
+/* ─── MAIN CONTENT ─── */
+.main-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* ─── MODEL GRID ─── */
+.model-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+@media (max-width: 840px) {
+  .model-grid { grid-template-columns: repeat(2, 1fr); }
+  .card-featured { grid-column: span 1 !important; }
+}
+@media (max-width: 600px) {
+  .model-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── MODEL CARD ─── */
+.model-card {
+  background: var(--md-sys-color-surface-container-low);
+  border: none;
+  border-radius: var(--md-sys-shape-corner-large);
+  padding: 16px;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+  /* M3 elevation level 1 */
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 1px rgba(0,0,0,0.15);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .model-card {
+    transition: background var(--motion-duration-short4) var(--motion-easing-standard),
+                box-shadow var(--motion-duration-medium2) var(--motion-easing-spring),
+                border-radius var(--motion-duration-medium2) var(--motion-easing-spring),
+                transform var(--motion-duration-medium2) var(--motion-easing-spring);
+  }
+  .model-card:hover {
+    background: var(--md-sys-color-surface-container);
+    /* M3 elevation level 3 */
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.30), 0 4px 8px 3px rgba(0,0,0,0.15);
+    border-radius: var(--md-sys-shape-corner-medium);
+    transform: translateY(-4px);
+  }
+  .model-card:active {
+    transform: scale(0.97);
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 1px rgba(0,0,0,0.15);
+    transition: transform var(--motion-duration-short2) var(--motion-easing-standard),
+                box-shadow var(--motion-duration-short2) var(--motion-easing-standard);
+  }
+  /* Spring bounce-back when mouse leaves */
+  .model-card:not(:hover) {
+    transition: background var(--motion-duration-short4) var(--motion-easing-standard),
+                box-shadow var(--motion-duration-medium3) var(--motion-easing-spring),
+                border-radius var(--motion-duration-medium3) var(--motion-easing-spring),
+                transform var(--motion-duration-medium3) var(--motion-easing-spring);
+  }
+}
+.model-card:focus-visible {
+  outline: 3px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
+
+.card-featured {
+  grid-column: span 2;
+  background: var(--md-sys-color-primary-container);
+}
+.card-featured .card-model-name {
+  font-family: var(--md-ref-typeface-brand);
+  font-size: 20px;
+  color: var(--md-sys-color-on-primary-container);
+}
+.card-featured .card-description {
+  color: var(--md-sys-color-on-primary-container);
+  opacity: 0.75;
+}
+.card-featured .provider-name {
+  color: var(--md-sys-color-on-primary-container);
+  opacity: 0.7;
+}
+.card-featured .card-stat-label {
+  color: var(--md-sys-color-on-primary-container);
+  opacity: 0.6;
+}
+.card-featured .card-stat-value {
+  color: var(--md-sys-color-on-primary-container);
+}
+.card-featured .performance-pill {
+  border-color: var(--md-sys-color-on-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  opacity: 0.7;
+}
+.card-featured .card-stats-row {
+  border-top-color: var(--md-sys-color-on-primary-container);
+  opacity: 0.85;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .card-featured {
+    transition: background var(--motion-duration-medium2) var(--motion-easing-spring),
+                box-shadow var(--motion-duration-medium2) var(--motion-easing-spring),
+                border-radius var(--motion-duration-medium2) var(--motion-easing-spring),
+                transform var(--motion-duration-medium2) var(--motion-easing-spring);
+  }
+  .card-featured:hover {
+    background: var(--md-sys-color-secondary-container);
+    /* M3 level 3 — higher contrast for tinted surface */
+    box-shadow: 0 2px 3px 0 rgba(0,0,0,0.30), 0 6px 10px 4px rgba(0,0,0,0.20);
+    border-radius: var(--md-sys-shape-corner-medium);
+    transform: translateY(-4px);
+  }
+  .card-featured:not(:hover) {
+    transition: background var(--motion-duration-medium2) var(--motion-easing-spring),
+                box-shadow var(--motion-duration-medium3) var(--motion-easing-spring),
+                border-radius var(--motion-duration-medium3) var(--motion-easing-spring),
+                transform var(--motion-duration-medium3) var(--motion-easing-spring);
+  }
+}
+
+/* Featured card tags row */
+.card-tags-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.card-accent-tag {
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-primary-container);
+  background: rgba(255,255,255,0.5);
+  padding: 3px 10px;
+  border-radius: var(--md-sys-shape-corner-full);
+  letter-spacing: 0.2px;
+  line-height: 1;
+}
+
+.card-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.provider-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.provider-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.provider-name {
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.capability-chip {
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: var(--md-sys-shape-corner-full);
+  flex-shrink: 0;
+  line-height: 1;
+  letter-spacing: 0.2px;
+}
+.capability-chip[data-cap="Text"] { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
+.capability-chip[data-cap="Image"] { background: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container); }
+.capability-chip[data-cap="Video"] { background: var(--md-sys-color-error-container); color: var(--md-sys-color-on-error-container); }
+.capability-chip[data-cap="Multimodal"] { background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); }
+.capability-chip[data-cap="Audio"] { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
+.capability-chip[data-cap="Embeddings"] { background: var(--md-sys-color-surface-container); color: var(--md-sys-color-on-surface-variant); }
+
+.card-model-name {
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+}
+.card-description {
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--md-sys-color-on-surface-variant);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+}
+.card-bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+}
+.performance-pill {
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: var(--md-sys-shape-corner-full);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  color: var(--md-sys-color-on-surface-variant);
+  line-height: 1;
+  letter-spacing: 0.2px;
+}
+.card-try-btn {
+  --md-text-button-label-text-color: var(--md-sys-color-primary);
+  --md-text-button-container-shape: var(--md-sys-shape-corner-full);
+  --md-text-button-hover-state-layer-color: var(--md-sys-color-primary);
+  --md-text-button-hover-state-layer-opacity: 0.08;
+  --md-text-button-pressed-state-layer-color: var(--md-sys-color-primary);
+  --md-text-button-pressed-state-layer-opacity: 0.12;
+  font-size: 12px;
+}
+
+/* Featured card stats row */
+.card-stats-row {
+  display: flex;
+  gap: 16px;
+  padding-top: 8px;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+}
+.card-stat {
+  flex: 1;
+}
+.card-stat-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.card-stat-value {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--md-sys-color-on-surface);
+}
+
+/* ─── INTERSTITIAL ─── */
+.interstitial {
+  background: var(--md-sys-color-primary-container);
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  padding: 32px 24px;
+  margin: 24px 0;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .interstitial {
+    opacity: 0;
+    transform: translateY(28px) scale(0.98);
+    transition: opacity var(--motion-duration-medium4) var(--motion-easing-spring),
+                transform var(--motion-duration-medium4) var(--motion-easing-spring);
+  }
+  .interstitial.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  .interstitial .code-block-wrap {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+    transition: opacity var(--motion-duration-medium4) var(--motion-easing-spring) var(--motion-duration-short3),
+                transform var(--motion-duration-medium4) var(--motion-easing-spring) var(--motion-duration-short3);
+  }
+  .interstitial.visible .code-block-wrap {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.interstitial-left { flex: 1; }
+.interstitial-eyebrow {
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-primary-container);
+  opacity: 0.6;
+}
+.interstitial-heading {
+  font-family: var(--md-ref-typeface-brand);
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--md-sys-color-on-primary-container);
+  line-height: 1.2;
+  margin-top: 8px;
+}
+.interstitial-body {
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--md-sys-color-on-primary-container);
+  opacity: 0.7;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+.interstitial-right { flex: 1; }
+.code-block-wrap {
+  position: relative;
+}
+.code-block {
+  font-family: var(--md-ref-typeface-mono);
+  font-size: 13px;
+  background: rgba(255,255,255,0.35);
+  border-radius: 12px;
+  padding: 16px;
+  color: var(--md-sys-color-on-primary-container);
+  white-space: pre;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+.code-copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--md-sys-color-primary-container);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-small);
+  padding: 4px 8px;
+  cursor: pointer;
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-primary-container);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.code-copy-btn:focus-visible {
+  outline: 3px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
+
+/* ─── COMPARISON STRIP ─── */
+.comparison-section {
+  margin: 48px 0 32px;
+}
+.comparison-heading {
+  font-family: var(--md-ref-typeface-brand);
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--md-sys-color-on-surface);
+  margin-bottom: 16px;
+}
+.comparison-strip-wrapper {
+  position: relative;
+}
+.comparison-strip {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding-bottom: 8px;
+}
+.comparison-strip::-webkit-scrollbar { display: none; }
+.comparison-card {
+  min-width: 300px;
+  flex: 1;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  background: var(--md-sys-color-surface-container-low);
+  border: none;
+  border-radius: var(--md-sys-shape-corner-large);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* M3 elevation level 1 */
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 1px rgba(0,0,0,0.15);
+}
+.comparison-scenario {
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+}
+.comparison-rec {
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--md-sys-color-primary);
+}
+.comparison-why {
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--md-sys-color-on-surface-variant);
+  line-height: 1.5;
+}
+.comparison-vs {
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+  padding-top: 8px;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+  opacity: 0.7;
+}
+.comparison-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+.comparison-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--md-sys-color-outline-variant);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  min-height: 0;
+}
+.comparison-dot:focus-visible {
+  outline: 3px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
+.comparison-dot.active { background: var(--md-sys-color-primary); }
+.comparison-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--md-sys-color-surface-container-low);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  color: var(--md-sys-color-on-surface);
+}
+.comparison-arrow:focus-visible {
+  outline: 3px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
+.comparison-arrow.left { left: -20px; }
+.comparison-arrow.right { right: -20px; }
+@media (max-width: 600px) {
+  .comparison-arrow { display: none; }
+}
+
+/* ─── FINAL CTA ─── */
+.final-cta {
+  background: var(--md-sys-color-primary-container);
+  padding: 64px 24px;
+  text-align: center;
+  margin: 48px 0 0;
+  border-radius: var(--md-sys-shape-corner-extra-large) var(--md-sys-shape-corner-extra-large) 0 0;
+}
+.final-cta-heading {
+  font-family: var(--md-ref-typeface-brand);
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--md-sys-color-on-primary-container);
+}
+.final-cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+.final-cta-buttons md-outlined-button {
+  --md-outlined-button-outline-color: var(--md-sys-color-primary);
+  --md-outlined-button-label-text-color: var(--md-sys-color-on-primary-container);
+  --md-outlined-button-hover-label-text-color: var(--md-sys-color-on-primary-container);
+  --md-outlined-button-pressed-label-text-color: var(--md-sys-color-on-primary-container);
+  --md-outlined-button-focus-label-text-color: var(--md-sys-color-on-primary-container);
+}
+.final-cta-buttons md-filled-button {
+  --md-filled-button-container-color: var(--md-sys-color-primary);
+  --md-filled-button-label-text-color: var(--md-sys-color-on-primary);
+}
+.final-cta-sub {
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-primary-container);
+  opacity: 0.5;
+  margin-top: 16px;
+}
+
+/* ─── DRAWER ─── */
+.drawer-scrim {
+  position: fixed;
+  inset: 0;
+  background: var(--md-sys-color-scrim);
+  opacity: 0;
+  z-index: 200;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .drawer-scrim { transition: opacity var(--motion-duration-short4) var(--motion-easing-standard); }
+}
+.drawer-scrim.open {
+  opacity: 0.32;
+  pointer-events: auto;
+}
+.model-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 480px;
+  max-width: 100vw;
+  background: var(--md-sys-color-surface);
+  border-left: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-extra-large) 0 0 0;
+  z-index: 210;
+  transform: translateX(480px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .model-drawer {
+    transition: transform var(--motion-duration-medium4) var(--motion-easing-spring);
+  }
+  .model-drawer.closing {
+    transition: transform var(--motion-duration-medium1) var(--motion-easing-exit);
+  }
+}
+.model-drawer.open {
+  transform: translateX(0);
+}
+.drawer-header {
+  padding: 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+}
+.drawer-title {
+  font-family: var(--md-ref-typeface-brand);
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--md-sys-color-on-surface);
+}
+.drawer-provider-chip {
+  display: inline-block;
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  padding: 2px 10px;
+  border-radius: var(--md-sys-shape-corner-full);
+  margin-top: 4px;
+}
+.drawer-caps {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.drawer-body {
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.drawer-description {
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--md-sys-color-on-surface);
+  line-height: 1.5;
+}
+.drawer-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.drawer-stat-cell {
+  background: var(--md-sys-color-surface-container-low);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-small);
+  padding: 12px;
+}
+.drawer-stat-cell .label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.drawer-stat-cell .value {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--md-sys-color-on-surface);
+  margin-top: 4px;
+}
+.drawer-tabs {
+  width: 100%;
+}
+.drawer-tab-content {
+  padding: 16px 0;
+}
+.drawer-tab-content[hidden] { display: none; }
+.drawer-try-area {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.drawer-try-area md-outlined-text-field {
+  width: 100%;
+}
+.drawer-response {
+  background: var(--md-sys-color-surface-container-low);
+  border-radius: var(--md-sys-shape-corner-small);
+  padding: 16px;
+  min-height: 80px;
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 14px;
+  color: var(--md-sys-color-on-surface);
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+.drawer-token-stats {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.drawer-code-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.drawer-code-tabs button {
+  background: none;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-full);
+  padding: 4px 12px;
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  min-height: 32px;
+}
+.drawer-code-tabs button:focus-visible {
+  outline: 3px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
+.drawer-code-tabs button.active {
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  border-color: transparent;
+}
+.drawer-code-block {
+  position: relative;
+  background: var(--md-sys-color-surface-container-low);
+  border-radius: var(--md-sys-shape-corner-small);
+  padding: 16px;
+  font-family: var(--md-ref-typeface-mono);
+  font-size: 13px;
+  color: var(--md-sys-color-on-surface);
+  white-space: pre;
+  overflow-x: auto;
+  line-height: 1.6;
+}
+.drawer-spec-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.drawer-spec-table td {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  font-size: 13px;
+  vertical-align: top;
+}
+.drawer-spec-table td:first-child {
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+  width: 40%;
+}
+.drawer-spec-table td:last-child {
+  color: var(--md-sys-color-on-surface);
+}
+.drawer-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.drawer-footer md-filled-button { width: 100%; }
+
+/* ─── EMPTY STATE ─── */
+.empty-state {
+  text-align: center;
+  padding: 64px 24px;
+  display: none;
+}
+.empty-state.visible { display: block; }
+.empty-state p {
+  font-size: 14px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* ─── RESPONSIVE ADJUSTMENTS ─── */
+@media (max-width: 840px) {
+  .masthead { max-height: none; }
+  .interstitial { flex-direction: column; }
+  .nav-center { display: none; }
+}
+@media (max-width: 600px) {
+  .filter-right { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ NAVIGATION ═══ -->
+<nav class="top-nav anim-fade" id="topNav" role="navigation" aria-label="Main navigation">
+  <div class="nav-left">
+    <span class="nav-wordmark">Vertex AI</span>
+    <span class="nav-divider">/</span>
+    <span class="nav-subtitle">Model Garden</span>
+  </div>
+  <div class="nav-center">
+    <div class="nav-search-wrapper">
+      <span class="nav-search-icon">⌕</span>
+      <input class="nav-search-input" id="searchField" type="text" placeholder="Search models" aria-label="Search models">
+    </div>
+  </div>
+  <div class="nav-avatar" aria-label="User account">
+    <div class="avatar-circle">R</div>
+  </div>
+</nav>
+
+<!-- ═══ MASTHEAD ═══ -->
+<header class="masthead">
+  <div class="masthead-left anim-slide-up" id="mastheadText">
+    <h1 class="masthead-headline">Every model worth building with.</h1>
+    <p class="masthead-sub">Explore and deploy 200+ foundation models from Google, Anthropic, Meta, and more.</p>
+  </div>
+</header>
+<div class="masthead-divider"><hr></div>
+
+<!-- ═══ FILTER BAR ═══ -->
+<div class="filter-bar anim-slide-down" id="filterBar">
+  <div class="filter-cluster category" role="group" aria-label="Category filters">
+    <md-filter-chip label="All" id="filterAll" selected aria-pressed="true"></md-filter-chip>
+    <md-filter-chip label="Text + code" data-filter="Text" aria-pressed="false"></md-filter-chip>
+    <md-filter-chip label="Image" data-filter="Image" aria-pressed="false"></md-filter-chip>
+    <md-filter-chip label="Video" data-filter="Video" aria-pressed="false"></md-filter-chip>
+    <md-filter-chip label="Audio" data-filter="Audio" aria-pressed="false"></md-filter-chip>
+    <md-filter-chip label="Multimodal" data-filter="Multimodal" aria-pressed="false"></md-filter-chip>
+    <md-filter-chip label="Embeddings" data-filter="Embeddings" aria-pressed="false"></md-filter-chip>
+  </div>
+</div>
+
+<!-- ═══ MAIN CONTENT ═══ -->
+<main class="main-content">
+  <div class="model-grid" id="modelGrid"></div>
+  <div class="empty-state" id="emptyState"><p>No models match — try a different search</p></div>
+
+  <!-- ═══ COMPARISON STRIP ═══ -->
+  <section class="comparison-section" id="comparisonSection">
+    <h2 class="comparison-heading">Not sure which model?</h2>
+    <div class="comparison-strip-wrapper">
+      <button class="comparison-arrow left" aria-label="Scroll left" onclick="document.querySelector('.comparison-strip').scrollBy({left:-300,behavior:'smooth'})">
+        ←
+      </button>
+      <div class="comparison-strip" id="comparisonStrip">
+        <div class="comparison-card">
+          <div class="comparison-scenario">For a customer support bot</div>
+          <div class="comparison-rec">Gemini 2.0 Flash</div>
+          <div class="comparison-why">Low latency matters more than depth. Flash handles conversational turns at &lt; 100ms.</div>
+          <div class="comparison-vs">vs Claude 3.5 Haiku for nuanced responses</div>
+        </div>
+        <div class="comparison-card">
+          <div class="comparison-scenario">For document analysis</div>
+          <div class="comparison-rec">Gemini 2.5 Pro</div>
+          <div class="comparison-why">1M+ token context. Send the whole document, not chunks.</div>
+          <div class="comparison-vs">vs Claude 3.7 Sonnet for legal/contractual reasoning</div>
+        </div>
+        <div class="comparison-card">
+          <div class="comparison-scenario">For image generation at scale</div>
+          <div class="comparison-rec">Imagen 4</div>
+          <div class="comparison-why">Google's latest. Photorealistic, fast, commercially safe.</div>
+          <div class="comparison-vs">vs Stable Diffusion 3.5 for open-source workflows</div>
+        </div>
+      </div>
+      <button class="comparison-arrow right" aria-label="Scroll right" onclick="document.querySelector('.comparison-strip').scrollBy({left:300,behavior:'smooth'})">
+        →
+      </button>
+    </div>
+    <div class="comparison-dots">
+      <button class="comparison-dot active" aria-label="Slide 1"></button>
+      <button class="comparison-dot" aria-label="Slide 2"></button>
+      <button class="comparison-dot" aria-label="Slide 3"></button>
+    </div>
+  </section>
+
+  <!-- ═══ FINAL CTA ═══ -->
+  <section class="final-cta">
+    <h2 class="final-cta-heading">One account. Every model.</h2>
+    <div class="final-cta-buttons">
+      <md-filled-button>Create free account</md-filled-button>
+      <md-outlined-button>Read the API docs</md-outlined-button>
+    </div>
+    <p class="final-cta-sub">$300 in free credits · No credit card · Cancel anytime</p>
+  </section>
+</main>
+
+<!-- ═══ DRAWER ═══ -->
+<div class="drawer-scrim" id="drawerScrim"></div>
+<aside class="model-drawer" id="modelDrawer" role="dialog" aria-label="Model details">
+  <div class="drawer-header">
+    <div>
+      <div class="drawer-title" id="drawerTitle"></div>
+      <div class="drawer-provider-chip" id="drawerProvider"></div>
+      <div class="drawer-caps" id="drawerCaps"></div>
+    </div>
+    <md-icon-button id="drawerClose" aria-label="Close drawer">
+      ✕
+    </md-icon-button>
+  </div>
+  <div class="drawer-body">
+    <p class="drawer-description" id="drawerDesc"></p>
+    <div class="drawer-stats-grid" id="drawerStats"></div>
+    <div>
+      <md-tabs id="drawerTabs" aria-label="Model details tabs">
+        <md-secondary-tab id="tabTry" aria-controls="panelTry">Try it</md-secondary-tab>
+        <md-secondary-tab id="tabCode" aria-controls="panelCode">Code</md-secondary-tab>
+        <md-secondary-tab id="tabSpecs" aria-controls="panelSpecs">Specs</md-secondary-tab>
+      </md-tabs>
+      <div class="drawer-tab-content" id="panelTry">
+        <div class="drawer-try-area">
+          <md-outlined-text-field id="drawerPrompt" label="Enter a prompt..." type="textarea" rows="4"></md-outlined-text-field>
+          <md-filled-button id="drawerRun">Run</md-filled-button>
+          <div class="drawer-response" id="drawerResponse"></div>
+          <div class="drawer-token-stats" id="drawerTokenStats"></div>
+        </div>
+      </div>
+      <div class="drawer-tab-content" id="panelCode" hidden>
+        <div class="drawer-code-tabs" id="codeLangTabs">
+          <button class="active" data-lang="python">Python</button>
+          <button data-lang="javascript">JavaScript</button>
+          <button data-lang="curl">curl</button>
+        </div>
+        <div class="drawer-code-block" id="drawerCodeBlock"></div>
+      </div>
+      <div class="drawer-tab-content" id="panelSpecs" hidden>
+        <table class="drawer-spec-table" id="drawerSpecTable"></table>
+      </div>
+    </div>
+  </div>
+  <div class="drawer-footer">
+    <md-filled-button>Deploy this model</md-filled-button>
+    <md-text-button>View full documentation →</md-text-button>
+  </div>
+</aside>
+
+<script>
+// ─── MODEL DATA ───
+const models = [
+  // Google
+  { name: "Gemini 2.5 Pro", desc: "Advanced reasoning, 1M+ context window", longDesc: "Google's most capable model for complex reasoning tasks. Supports text, code, image, and video inputs with a 1M+ token context window. Ideal for document analysis, multi-step reasoning, and code generation at scale.", provider: "Google", capability: "Multimodal", tier: "Powerful", cost: "$0.0025/1K in", featured: true, tags: ["Text","Image","Video","Code"], context: "1,048,576", maxOutput: "8,192", inputCost: "$0.00125/1K", outputCost: "$0.005/1K", cutoff: "Apr 2025", languages: "100+", license: "Proprietary", fineTuning: "Yes", batch: "Yes", functionCalling: "Yes" },
+  { name: "Gemini 2.0 Flash", desc: "Fast multimodal inference at low cost", longDesc: "Optimized for speed and cost efficiency while maintaining strong multimodal capabilities. Handles text, image, and video inputs with sub-100ms latency for most queries.", provider: "Google", capability: "Multimodal", tier: "Fast", cost: "$0.0001/1K in", featured: false, context: "1,048,576", maxOutput: "8,192", inputCost: "$0.0001/1K", outputCost: "$0.0004/1K", cutoff: "Mar 2025", languages: "100+", license: "Proprietary", fineTuning: "Yes", batch: "Yes", functionCalling: "Yes" },
+  { name: "Gemini 2.0 Flash-Lite", desc: "Lightest Gemini model for high-volume tasks", longDesc: "The most cost-effective Gemini model, designed for high-throughput batch processing and latency-sensitive applications where cost efficiency is paramount.", provider: "Google", capability: "Text", tier: "Fast", cost: "$0.00004/1K in", featured: false, context: "1,048,576", maxOutput: "8,192", inputCost: "$0.00004/1K", outputCost: "$0.00016/1K", cutoff: "Mar 2025", languages: "50+", license: "Proprietary", fineTuning: "No", batch: "Yes", functionCalling: "Yes" },
+  { name: "Imagen 4", desc: "Photorealistic image generation and editing", longDesc: "Google's latest image generation model producing photorealistic outputs. Supports text-to-image, image editing, and inpainting with built-in safety filters and commercial licensing.", provider: "Google", capability: "Image", tier: "Balanced", cost: "$0.0004/image", featured: false, context: "N/A", maxOutput: "N/A", inputCost: "$0.0004/img", outputCost: "N/A", cutoff: "N/A", languages: "40+", license: "Proprietary", fineTuning: "No", batch: "Yes", functionCalling: "No" },
+  { name: "Veo 2", desc: "High-fidelity video generation from text or image", longDesc: "Generates high-quality video clips from text prompts or reference images. Supports multiple aspect ratios, camera controls, and consistent character generation across frames.", provider: "Google", capability: "Video", tier: "Powerful", cost: "$0.35/second", featured: false, context: "N/A", maxOutput: "N/A", inputCost: "Text prompt", outputCost: "$0.35/sec", cutoff: "N/A", languages: "20+", license: "Proprietary", fineTuning: "No", batch: "No", functionCalling: "No" },
+  { name: "Chirp 3", desc: "State-of-the-art speech recognition", longDesc: "Google's latest automatic speech recognition model supporting real-time and batch transcription across 100+ languages with speaker diarization and punctuation.", provider: "Google", capability: "Audio", tier: "Fast", cost: "$0.016/min", featured: false, context: "N/A", maxOutput: "N/A", inputCost: "$0.016/min", outputCost: "N/A", cutoff: "N/A", languages: "100+", license: "Proprietary", fineTuning: "No", batch: "Yes", functionCalling: "No" },
+
+  // Anthropic
+  { name: "Claude 3.7 Sonnet", desc: "Extended thinking, strong coding and reasoning", longDesc: "Anthropic's most capable model with extended thinking capabilities. Excels at complex coding tasks, legal reasoning, and nuanced analysis with transparent chain-of-thought.", provider: "Anthropic", capability: "Text", tier: "Powerful", cost: "$0.003/1K in", featured: true, tags: ["Text","Reasoning","Code"], context: "200,000", maxOutput: "128,000", inputCost: "$0.003/1K", outputCost: "$0.015/1K", cutoff: "Mar 2025", languages: "30+", license: "Proprietary", fineTuning: "No", batch: "Yes", functionCalling: "Yes" },
+  { name: "Claude 3.5 Haiku", desc: "Fast and cost-efficient with strong capability", longDesc: "The fastest model in Anthropic's Claude 3.5 family. Optimized for high-throughput applications like customer support, content classification, and quick code generation.", provider: "Anthropic", capability: "Text", tier: "Fast", cost: "$0.0008/1K in", featured: false, context: "200,000", maxOutput: "8,192", inputCost: "$0.0008/1K", outputCost: "$0.004/1K", cutoff: "Mar 2025", languages: "30+", license: "Proprietary", fineTuning: "No", batch: "Yes", functionCalling: "Yes" },
+
+  // Meta
+  { name: "Llama 3.3 70B", desc: "Open-weight instruction-tuned text model", longDesc: "Meta's latest open-weight model optimized for instruction following, coding, and general reasoning. Fully open weights enable self-hosting and fine-tuning without licensing restrictions.", provider: "Meta", capability: "Text", tier: "Balanced", cost: "open", featured: true, tags: ["Text","Code","Translation"], context: "128,000", maxOutput: "4,096", inputCost: "Free (open)", outputCost: "Free (open)", cutoff: "Dec 2024", languages: "30+", license: "Llama 3.3 Community", fineTuning: "Yes", batch: "Yes", functionCalling: "Yes" },
+  { name: "Llama 3.2 Vision 11B", desc: "Multimodal open model, image understanding", longDesc: "Multimodal extension of the Llama family supporting image and text inputs. Performs visual question answering, image captioning, and document understanding tasks.", provider: "Meta", capability: "Multimodal", tier: "Balanced", cost: "open", featured: false, context: "128,000", maxOutput: "4,096", inputCost: "Free (open)", outputCost: "Free (open)", cutoff: "Dec 2024", languages: "12", license: "Llama 3.2 Community", fineTuning: "Yes", batch: "Yes", functionCalling: "No" },
+
+  // Mistral
+  { name: "Mistral Large 2", desc: "Frontier multilingual European model", longDesc: "Mistral's most capable model with strong multilingual performance across European and Asian languages. 128K context window with native function calling and JSON mode.", provider: "Mistral", capability: "Text", tier: "Powerful", cost: "$0.002/1K in", featured: true, icons: ["text_fields","translate","code"], context: "128,000", maxOutput: "4,096", inputCost: "$0.002/1K", outputCost: "$0.006/1K", cutoff: "Feb 2025", languages: "40+", license: "Proprietary", fineTuning: "Yes", batch: "Yes", functionCalling: "Yes" },
+  { name: "Mistral Nemo", desc: "Compact 12B multilingual model", longDesc: "A compact 12B parameter model offering strong performance for its size. Particularly efficient for multilingual tasks and on-device deployment scenarios.", provider: "Mistral", capability: "Text", tier: "Fast", cost: "$0.0003/1K in", featured: false, context: "128,000", maxOutput: "4,096", inputCost: "$0.0003/1K", outputCost: "$0.0003/1K", cutoff: "Jan 2025", languages: "20+", license: "Apache 2.0", fineTuning: "Yes", batch: "Yes", functionCalling: "Yes" },
+
+  // Google Open (Gemma)
+  { name: "Gemma 3 27B", desc: "Lightweight open model, strong benchmark scores", longDesc: "Google's open-weight model offering competitive performance at a fraction of the size of larger models. Ideal for fine-tuning and on-premise deployment.", provider: "Google Open", capability: "Text", tier: "Balanced", cost: "open", featured: true, tags: ["Text","Code","Fine-tuning"], context: "128,000", maxOutput: "8,192", inputCost: "Free (open)", outputCost: "Free (open)", cutoff: "Feb 2025", languages: "30+", license: "Gemma", fineTuning: "Yes", batch: "Yes", functionCalling: "No" },
+  { name: "Gemma 3 9B", desc: "Efficient open model for on-device inference", longDesc: "The smallest Gemma 3 variant optimized for edge deployment and on-device inference. Runs efficiently on consumer GPUs while maintaining strong general capabilities.", provider: "Google Open", capability: "Text", tier: "Fast", cost: "open", featured: false, context: "32,000", maxOutput: "8,192", inputCost: "Free (open)", outputCost: "Free (open)", cutoff: "Feb 2025", languages: "20+", license: "Gemma", fineTuning: "Yes", batch: "Yes", functionCalling: "No" },
+
+  // AI21
+  { name: "Jamba 1.5 Large", desc: "Hybrid SSM-Transformer, 256K context", longDesc: "AI21's flagship model combining SSM and Transformer architectures for efficient long-context processing. Handles 256K token contexts with linear scaling performance.", provider: "AI21 Labs", capability: "Text", tier: "Powerful", cost: "$0.002/1K in", featured: true, tags: ["Text","Long context","Hybrid arch"], context: "256,000", maxOutput: "4,096", inputCost: "$0.002/1K", outputCost: "$0.008/1K", cutoff: "Mar 2025", languages: "20+", license: "Proprietary", fineTuning: "Yes", batch: "Yes", functionCalling: "Yes" },
+  { name: "Jamba 1.5 Mini", desc: "Fast hybrid model, 256K context", longDesc: "The compact variant of Jamba maintaining the 256K context window with lower latency. Suited for real-time applications requiring long-context understanding.", provider: "AI21 Labs", capability: "Text", tier: "Fast", cost: "$0.0002/1K in", featured: false, context: "256,000", maxOutput: "4,096", inputCost: "$0.0002/1K", outputCost: "$0.0004/1K", cutoff: "Mar 2025", languages: "15+", license: "Proprietary", fineTuning: "No", batch: "Yes", functionCalling: "Yes" },
+
+  // Cohere
+  { name: "Command R+", desc: "Enterprise RAG and tool use specialist", longDesc: "Cohere's enterprise-grade model optimized for retrieval-augmented generation and multi-step tool use. Includes built-in citation generation and grounded responses.", provider: "Cohere", capability: "Text", tier: "Powerful", cost: "$0.003/1K in", featured: true, tags: ["Text","RAG","Tool use"], context: "128,000", maxOutput: "4,096", inputCost: "$0.003/1K", outputCost: "$0.015/1K", cutoff: "Mar 2025", languages: "20+", license: "Proprietary", fineTuning: "Yes", batch: "Yes", functionCalling: "Yes" },
+  { name: "Command R", desc: "Retrieval-augmented generation at scale", longDesc: "Optimized for retrieval-augmented generation with native citation support. Cost-effective option for enterprise search, knowledge base Q&A, and document summarization.", provider: "Cohere", capability: "Text", tier: "Balanced", cost: "$0.0005/1K in", featured: false, context: "128,000", maxOutput: "4,096", inputCost: "$0.0005/1K", outputCost: "$0.0015/1K", cutoff: "Jan 2025", languages: "20+", license: "Proprietary", fineTuning: "Yes", batch: "Yes", functionCalling: "Yes" },
+
+  // Stability AI
+  { name: "Stable Diffusion 3.5 Large", desc: "High-quality image generation", longDesc: "Stability AI's latest diffusion model for high-quality image synthesis. Supports text-to-image with detailed prompt following and multiple artistic styles.", provider: "Stability AI", capability: "Image", tier: "Powerful", cost: "$0.065/image", featured: true, tags: ["Image gen","Inpainting","Styles"], context: "N/A", maxOutput: "N/A", inputCost: "Text prompt", outputCost: "$0.065/img", cutoff: "N/A", languages: "10+", license: "Stability Community", fineTuning: "Yes", batch: "Yes", functionCalling: "No" },
+  { name: "Stable Image Ultra", desc: "Ultra-realistic image synthesis", longDesc: "Ultra-high-quality variant optimized for photorealistic output. Best-in-class for product photography, architectural visualization, and commercial creative work.", provider: "Stability AI", capability: "Image", tier: "Balanced", cost: "$0.08/image", featured: false, context: "N/A", maxOutput: "N/A", inputCost: "Text prompt", outputCost: "$0.08/img", cutoff: "N/A", languages: "10+", license: "Stability Community", fineTuning: "No", batch: "Yes", functionCalling: "No" },
+
+  // Embeddings
+  { name: "text-embedding-005", desc: "Google's latest text embedding model", longDesc: "State-of-the-art text embedding model producing 768-dimensional vectors. Optimized for semantic search, clustering, and retrieval with support for 256 languages.", provider: "Google", capability: "Embeddings", tier: "Fast", cost: "$0.00002/1K chars", featured: false, context: "2,048 tokens", maxOutput: "768 dims", inputCost: "$0.00002/1K", outputCost: "N/A", cutoff: "N/A", languages: "256", license: "Proprietary", fineTuning: "No", batch: "Yes", functionCalling: "No" },
+  { name: "multimodalembedding", desc: "Joint text and image embedding", longDesc: "Produces joint embeddings for text and images in a shared vector space. Enables cross-modal search where text queries can find relevant images and vice versa.", provider: "Google", capability: "Embeddings", tier: "Balanced", cost: "$0.002/1K chars", featured: false, context: "N/A", maxOutput: "1,408 dims", inputCost: "$0.002/1K", outputCost: "N/A", cutoff: "N/A", languages: "50+", license: "Proprietary", fineTuning: "No", batch: "Yes", functionCalling: "No" },
+  { name: "voyage-3", desc: "Anthropic's high-quality text embeddings", longDesc: "Anthropic-partnered embedding model with excellent retrieval performance. Optimized for RAG pipelines, code search, and semantic similarity with 1024-dimensional output.", provider: "Anthropic", capability: "Embeddings", tier: "Fast", cost: "$0.00002/1K chars", featured: false, context: "16,000 tokens", maxOutput: "1,024 dims", inputCost: "$0.00002/1K", outputCost: "N/A", cutoff: "N/A", languages: "30+", license: "Proprietary", fineTuning: "No", batch: "Yes", functionCalling: "No" },
+  { name: "nomic-embed-text", desc: "Open-source high-performance embeddings", longDesc: "Fully open-source embedding model with competitive performance against proprietary alternatives. Self-hostable with support for custom fine-tuning on domain-specific data.", provider: "Open", capability: "Embeddings", tier: "Fast", cost: "open", featured: false, context: "8,192 tokens", maxOutput: "768 dims", inputCost: "Free (open)", outputCost: "N/A", cutoff: "N/A", languages: "English", license: "Apache 2.0", fineTuning: "Yes", batch: "Yes", functionCalling: "No" },
+];
+
+const providerColors = {
+  "Google": "#3A6B4C",
+  "Google Open": "#3A6B4C",
+  "Anthropic": "#6B5744",
+  "Meta": "#4A6B5C",
+  "Mistral": "#7B6B3A",
+  "AI21 Labs": "#5A5C6B",
+  "Cohere": "#3A6B65",
+  "Stability AI": "#5C4A6B",
+  "Open": "#555B55"
+};
+
+// ─── RENDER GRID ───
+function renderGrid(filteredModels) {
+  const grid = document.getElementById('modelGrid');
+  const empty = document.getElementById('emptyState');
+  grid.innerHTML = '';
+
+  if (filteredModels.length === 0) {
+    empty.classList.add('visible');
+    return;
+  }
+  empty.classList.remove('visible');
+
+  let cardIndex = 0;
+  const interstitialInserted = { done: false };
+
+  filteredModels.forEach((model, i) => {
+    // Insert interstitial after ~7 cards
+    if (i === 7 && !interstitialInserted.done) {
+      const interEl = createInterstitial();
+      grid.appendChild(interEl);
+      interstitialInserted.done = true;
+    }
+
+    const card = createModelCard(model, cardIndex);
+    grid.appendChild(card);
+    cardIndex++;
+  });
+
+  // Animate cards in
+  requestAnimationFrame(() => {
+    const cards = grid.querySelectorAll('.model-card, .interstitial');
+    cards.forEach((card, i) => {
+      if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+        const delay = 450 + Math.floor(i / 3) * 200 + (i % 3) * 40;
+        setTimeout(() => card.classList.add('visible'), delay);
+      } else {
+        card.classList.add('visible');
+      }
+    });
+  });
+
+  // Observe interstitial
+  const interstitial = grid.querySelector('.interstitial');
+  if (interstitial) {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.2 });
+    obs.observe(interstitial);
+  }
+}
+
+function createModelCard(model, index) {
+  const card = document.createElement('div');
+  card.className = `model-card anim-card${model.featured ? ' card-featured' : ''}`;
+  card.style.setProperty('--card-provider-color', providerColors[model.provider] || '#374151');
+  card.setAttribute('tabindex', '0');
+  card.setAttribute('role', 'button');
+  card.setAttribute('aria-label', `${model.name} by ${model.provider}`);
+
+  card.dataset.name = model.name.toLowerCase();
+  card.dataset.desc = model.desc.toLowerCase();
+  card.dataset.provider = model.provider.toLowerCase();
+  card.dataset.capability = model.capability.toLowerCase();
+
+  let html = '';
+
+  html += `
+    <div class="card-top-bar">
+      <div class="provider-info">
+        <span class="provider-dot" style="background:${providerColors[model.provider] || '#555B55'}"></span>
+        <span class="provider-name">${model.provider}</span>
+      </div>
+      <span class="capability-chip" data-cap="${model.capability}">${model.capability}</span>
+    </div>
+    <div class="card-model-name">${model.name}</div>
+    <div class="card-description">${model.desc}</div>`;
+
+  if (model.featured && model.tags) {
+    html += `<div class="card-tags-row">`;
+    model.tags.forEach(tag => {
+      html += `<span class="card-accent-tag">${tag}</span>`;
+    });
+    html += `</div>`;
+  }
+
+  html += `
+    <div class="card-bottom-row">
+      <span class="performance-pill">${model.tier}</span>
+      <md-text-button class="card-try-btn">Try →</md-text-button>
+    </div>
+  `;
+
+  if (model.featured) {
+    html += `
+    <div class="card-stats-row">
+      <div class="card-stat"><div class="card-stat-label">Context window</div><div class="card-stat-value">${model.context}</div></div>
+      <div class="card-stat"><div class="card-stat-label">Input cost</div><div class="card-stat-value">${model.inputCost}</div></div>
+      <div class="card-stat"><div class="card-stat-label">Output cost</div><div class="card-stat-value">${model.outputCost}</div></div>
+    </div>`;
+  }
+
+  card.innerHTML = html;
+  card.addEventListener('click', () => openDrawer(model));
+  card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDrawer(model); } });
+  return card;
+}
+
+function createInterstitial() {
+  const el = document.createElement('div');
+  el.className = 'interstitial';
+  el.style.gridColumn = '1 / -1';
+  el.innerHTML = `
+    <div class="interstitial-left">
+      <div class="interstitial-eyebrow">Why one platform</div>
+      <h2 class="interstitial-heading">Compare any two models with one API change.</h2>
+      <p class="interstitial-body">Every model in this garden uses the same Vertex AI endpoint. Switching models is one line of code.</p>
+    </div>
+    <div class="interstitial-right">
+      <div class="code-block-wrap">
+        <pre class="code-block"><span style="opacity:0.5"># Try Gemini</span>
+model=<span style="color:var(--md-sys-color-primary)">"gemini-2.0-flash"</span>
+
+<span style="opacity:0.5"># Switch to Claude — one change</span>
+model=<span style="color:var(--md-sys-color-primary)">"claude-3-5-haiku"</span>
+
+<span style="opacity:0.5"># Switch to Llama — same change</span>
+model=<span style="color:var(--md-sys-color-primary)">"meta/llama-3.3-70b"</span></pre>
+        <button class="code-copy-btn" onclick="navigator.clipboard.writeText('model=\\'gemini-2.0-flash\\'\\nmodel=\\'claude-3-5-haiku\\'\\nmodel=\\'meta/llama-3.3-70b\\'');this.textContent='Copied';" aria-label="Copy code">
+Copy
+        </button>
+      </div>
+    </div>
+  `;
+  return el;
+}
+
+// ─── DRAWER ───
+const drawer = document.getElementById('modelDrawer');
+const scrim = document.getElementById('drawerScrim');
+
+function openDrawer(model) {
+  document.getElementById('drawerTitle').textContent = model.name;
+  document.getElementById('drawerProvider').textContent = model.provider;
+  document.getElementById('drawerDesc').textContent = model.longDesc;
+
+  // Caps
+  const capsEl = document.getElementById('drawerCaps');
+  capsEl.innerHTML = `<span class="capability-chip" data-cap="${model.capability}">${model.capability}</span>`;
+
+  // Stats
+  document.getElementById('drawerStats').innerHTML = `
+    <div class="drawer-stat-cell"><div class="label">Context window</div><div class="value">${model.context}</div></div>
+    <div class="drawer-stat-cell"><div class="label">Max output</div><div class="value">${model.maxOutput}</div></div>
+    <div class="drawer-stat-cell"><div class="label">Input cost</div><div class="value">${model.inputCost}</div></div>
+    <div class="drawer-stat-cell"><div class="label">Output cost</div><div class="value">${model.outputCost}</div></div>
+  `;
+
+  // Code
+  updateCodeBlock(model, 'python');
+
+  // Specs
+  document.getElementById('drawerSpecTable').innerHTML = `
+    <tr><td>Training cutoff</td><td>${model.cutoff}</td></tr>
+    <tr><td>Languages</td><td>${model.languages}</td></tr>
+    <tr><td>License</td><td>${model.license}</td></tr>
+    <tr><td>Fine-tuning</td><td>${model.fineTuning}</td></tr>
+    <tr><td>Batch API</td><td>${model.batch}</td></tr>
+    <tr><td>Function calling</td><td>${model.functionCalling}</td></tr>
+  `;
+
+  // Reset tabs
+  showDrawerTab('panelTry');
+  document.getElementById('drawerResponse').textContent = '';
+  document.getElementById('drawerTokenStats').textContent = '';
+
+  // Tab switching
+  const tabs = document.getElementById('drawerTabs');
+  tabs.activeTabIndex = 0;
+
+  // Store current model for run
+  drawer._currentModel = model;
+
+  drawer.classList.remove('closing');
+  drawer.classList.add('open');
+  scrim.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDrawer() {
+  drawer.classList.add('closing');
+  drawer.classList.remove('open');
+  scrim.classList.remove('open');
+  document.body.style.overflow = '';
+  setTimeout(() => drawer.classList.remove('closing'), 250);
+}
+
+document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+scrim.addEventListener('click', closeDrawer);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+// Drawer tabs
+document.getElementById('drawerTabs').addEventListener('change', (e) => {
+  const idx = e.target.activeTabIndex;
+  const panels = ['panelTry', 'panelCode', 'panelSpecs'];
+  showDrawerTab(panels[idx]);
+});
+
+function showDrawerTab(id) {
+  ['panelTry', 'panelCode', 'panelSpecs'].forEach(p => {
+    document.getElementById(p).hidden = (p !== id);
+  });
+}
+
+// Code language tabs
+document.getElementById('codeLangTabs').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-lang]');
+  if (!btn) return;
+  document.querySelectorAll('#codeLangTabs button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (drawer._currentModel) updateCodeBlock(drawer._currentModel, btn.dataset.lang);
+});
+
+function updateCodeBlock(model, lang) {
+  const modelId = model.name.toLowerCase().replace(/\s+/g, '-').replace(/\+/g, 'plus');
+  const block = document.getElementById('drawerCodeBlock');
+  if (lang === 'python') {
+    block.textContent = `from vertexai.generative_models import GenerativeModel
+
+model = GenerativeModel("${modelId}")
+response = model.generate_content(
+    "Your prompt here",
+    generation_config={
+        "max_output_tokens": 2048,
+        "temperature": 0.7,
+    }
+)
+print(response.text)`;
+  } else if (lang === 'javascript') {
+    block.textContent = `import { VertexAI } from '@google-cloud/vertexai';
+
+const vertex = new VertexAI({
+  project: 'your-project',
+  location: 'us-central1'
+});
+
+const model = vertex.getGenerativeModel({
+  model: '${modelId}'
+});
+
+const result = await model.generateContent(
+  'Your prompt here'
+);
+console.log(result.response.text());`;
+  } else {
+    block.textContent = `curl -X POST \\
+  "https://us-central1-aiplatform.googleapis.com/v1/projects/PROJECT/locations/us-central1/publishers/google/models/${modelId}:generateContent" \\
+  -H "Authorization: Bearer $(gcloud auth print-access-token)" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "contents": [{
+      "parts": [{"text": "Your prompt here"}]
+    }]
+  }'`;
+  }
+}
+
+// Mock run
+document.getElementById('drawerRun').addEventListener('click', () => {
+  const prompt = document.getElementById('drawerPrompt').value;
+  if (!prompt) return;
+  const responseEl = document.getElementById('drawerResponse');
+  const statsEl = document.getElementById('drawerTokenStats');
+  responseEl.textContent = '';
+  statsEl.textContent = '';
+
+  const mockResponses = [
+    "That's an interesting question. Let me break this down step by step.\n\nFirst, we need to consider the key factors involved. The approach depends on your specific use case, scale requirements, and latency constraints.\n\nFor most production deployments, I'd recommend starting with a simple implementation and iterating based on real performance data. Premature optimization here could lead to unnecessary complexity.",
+    "Based on the input provided, here's my analysis:\n\nThe data suggests a strong correlation between the variables you've described. The primary driver appears to be the interaction between throughput requirements and model complexity.\n\nI'd recommend benchmarking with your actual workload before making architectural decisions.",
+    "Here's a concise implementation approach:\n\n1. Start with the base configuration\n2. Add your custom preprocessing pipeline\n3. Implement the evaluation loop\n4. Deploy behind a load balancer\n\nThis pattern scales well to millions of requests per day while keeping latency under your target threshold."
+  ];
+  const response = mockResponses[Math.floor(Math.random() * mockResponses.length)];
+  let i = 0;
+  const startTime = Date.now();
+  const interval = setInterval(() => {
+    if (i < response.length) {
+      responseEl.textContent += response[i];
+      i++;
+    } else {
+      clearInterval(interval);
+      const elapsed = Date.now() - startTime;
+      const tokens = Math.floor(response.length * 0.3);
+      statsEl.textContent = `${tokens} tokens · ${elapsed}ms`;
+    }
+  }, 12);
+});
+
+// ─── FILTERS ───
+let activeCategory = null;
+
+function applyFilters() {
+  const searchTerm = document.getElementById('searchField').value?.toLowerCase() || '';
+
+  const filtered = models.filter(m => {
+    // Category filter
+    if (activeCategory && m.capability.toLowerCase() !== activeCategory.toLowerCase()) {
+      // Special case: "Text" filter also matches "Text + code" capability
+      if (activeCategory === 'Text' && m.capability === 'Text') { /* ok */ }
+      else if (activeCategory !== m.capability) return false;
+    }
+
+    // Search
+    if (searchTerm) {
+      const searchable = `${m.name} ${m.desc} ${m.provider} ${m.capability}`.toLowerCase();
+      if (!searchable.includes(searchTerm)) return false;
+    }
+
+    return true;
+  });
+
+  // Animate transition
+  const grid = document.getElementById('modelGrid');
+  const existingCards = grid.querySelectorAll('.model-card');
+
+  if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches && existingCards.length > 0) {
+    existingCards.forEach(c => {
+      c.style.transition = 'opacity 150ms var(--motion-easing-exit), transform 150ms var(--motion-easing-exit)';
+      c.style.opacity = '0';
+      c.style.transform = 'scale(0.95)';
+    });
+    setTimeout(() => renderGrid(filtered), 250);
+  } else {
+    renderGrid(filtered);
+  }
+}
+
+// Category chips
+document.querySelectorAll('.filter-cluster.category md-filter-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const isAll = chip.id === 'filterAll';
+    if (isAll) {
+      activeCategory = null;
+      document.querySelectorAll('.filter-cluster.category md-filter-chip').forEach(c => {
+        c.selected = c.id === 'filterAll';
+      });
+    } else {
+      activeCategory = chip.dataset.filter;
+      document.getElementById('filterAll').selected = false;
+      // Deselect others, select this one
+      document.querySelectorAll('.filter-cluster.category md-filter-chip:not(#filterAll)').forEach(c => {
+        c.selected = c.dataset.filter === activeCategory;
+      });
+    }
+    applyFilters();
+  });
+});
+
+// Search
+let searchDebounce;
+document.getElementById('searchField').addEventListener('input', () => {
+  clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(applyFilters, 150);
+});
+
+// ⌘K shortcut
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    const field = document.getElementById('searchField');
+    if (field) field.focus();
+  }
+});
+
+// ─── NAV SCROLL EFFECT ───
+window.addEventListener('scroll', () => {
+  document.getElementById('topNav').classList.toggle('scrolled', window.scrollY > 80);
+});
+
+
+
+// ─── COMPARISON DOTS ───
+const compStrip = document.getElementById('comparisonStrip');
+if (compStrip) {
+  compStrip.addEventListener('scroll', () => {
+    const scrollPos = compStrip.scrollLeft;
+    const cardWidth = compStrip.querySelector('.comparison-card')?.offsetWidth || 300;
+    const idx = Math.round(scrollPos / (cardWidth + 16));
+    document.querySelectorAll('.comparison-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === idx);
+    });
+  });
+  document.querySelectorAll('.comparison-dot').forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+      const cardWidth = compStrip.querySelector('.comparison-card')?.offsetWidth || 300;
+      compStrip.scrollTo({ left: i * (cardWidth + 16), behavior: 'smooth' });
+    });
+  });
+}
+
+// ─── COMPARISON SECTION ANIMATION ───
+const compSection = document.getElementById('comparisonSection');
+if (compSection) {
+  const compObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const cards = compSection.querySelectorAll('.comparison-card');
+        cards.forEach((card, i) => {
+          if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+            card.style.opacity = '0';
+            card.style.transform = 'translateX(24px) scale(0.97)';
+            card.style.transition = `opacity 400ms var(--motion-easing-spring) ${i * 70}ms, transform 400ms var(--motion-easing-spring) ${i * 70}ms`;
+            requestAnimationFrame(() => {
+              card.style.opacity = '1';
+              card.style.transform = 'translateX(0) scale(1)';
+            });
+          }
+        });
+        compObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  compObs.observe(compSection);
+}
+
+// ─── PAGE LOAD CHOREOGRAPHY ───
+function initPageLoad() {
+  const prefersMotion = window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+
+  if (prefersMotion) {
+    setTimeout(() => document.getElementById('topNav').classList.add('visible'), 0);
+    setTimeout(() => document.getElementById('mastheadText').classList.add('visible'), 100);
+    setTimeout(() => document.getElementById('filterBar').classList.add('visible'), 350);
+  } else {
+    document.querySelectorAll('.anim-fade, .anim-slide-up, .anim-slide-down').forEach(el => {
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+  }
+
+  renderGrid(models);
+}
+
+// Wait for fonts and MWC
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initPageLoad);
+} else {
+  initPageLoad();
+}
+</script>
+</body>
+</html>
