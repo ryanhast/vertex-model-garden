@@ -901,15 +901,17 @@ md-secondary-tab {
   margin-top: 24px;
 }
 .final-cta-buttons md-outlined-button {
-  --md-outlined-button-outline-color: var(--md-sys-color-primary);
+  --md-outlined-button-outline-color: var(--md-sys-color-on-primary-container);
   --md-outlined-button-label-text-color: var(--md-sys-color-on-primary-container);
   --md-outlined-button-hover-label-text-color: var(--md-sys-color-on-primary-container);
   --md-outlined-button-pressed-label-text-color: var(--md-sys-color-on-primary-container);
   --md-outlined-button-focus-label-text-color: var(--md-sys-color-on-primary-container);
+  min-width: 160px;
 }
 .final-cta-buttons md-filled-button {
   --md-filled-button-container-color: var(--md-sys-color-primary);
   --md-filled-button-label-text-color: var(--md-sys-color-on-primary);
+  min-width: 180px;
 }
 .final-cta-sub {
   font-family: var(--md-ref-typeface-plain);
@@ -1244,7 +1246,7 @@ md-secondary-tab {
   background-position: right 10px center;
   min-width: 180px;
 }
-.filter-sort-select:focus-visible { outline: 3px solid var(--md-sys-color-primary); outline-offset: 2px; }
+.filter-sort-select:focus { outline: none; border-color: var(--md-sys-color-primary); box-shadow: 0 0 0 2px var(--md-sys-color-primary); }
 .filter-clear-btn {
   height: 32px;
   padding: 0 12px;
