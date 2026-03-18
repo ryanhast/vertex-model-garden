@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vertex AI — Model Garden (Google Brand)</title>
+<title>Vertex AI — Model Garden</title>
+<!-- Google Brand Version -->
 
 <script type="importmap">
 {
@@ -37,7 +38,7 @@
   --md-sys-shape-corner-extra-large: 28px;
   --md-sys-shape-corner-full: 9999px;
 
-  /* Color scheme — Google Blue source, light mode */
+  /* Color scheme — Google Blue, light mode */
   --md-sys-color-primary: #1A73E8;
   --md-sys-color-on-primary: #FFFFFF;
   --md-sys-color-primary-container: #D3E3FD;
@@ -900,17 +901,15 @@ md-secondary-tab {
   margin-top: 24px;
 }
 .final-cta-buttons md-outlined-button {
-  --md-outlined-button-outline-color: var(--md-sys-color-on-primary-container);
+  --md-outlined-button-outline-color: var(--md-sys-color-primary);
   --md-outlined-button-label-text-color: var(--md-sys-color-on-primary-container);
   --md-outlined-button-hover-label-text-color: var(--md-sys-color-on-primary-container);
   --md-outlined-button-pressed-label-text-color: var(--md-sys-color-on-primary-container);
   --md-outlined-button-focus-label-text-color: var(--md-sys-color-on-primary-container);
-  min-width: 180px;
 }
 .final-cta-buttons md-filled-button {
   --md-filled-button-container-color: var(--md-sys-color-primary);
   --md-filled-button-label-text-color: var(--md-sys-color-on-primary);
-  min-width: 200px;
 }
 .final-cta-sub {
   font-family: var(--md-ref-typeface-plain);
@@ -1145,8 +1144,218 @@ md-secondary-tab {
   .interstitial { flex-direction: column; }
   .nav-center { display: none; }
 }
-@media (max-width: 600px) {
-  .filter-right { display: none; }
+
+/* ─── ADVANCED FILTER PANEL ─── */
+.filter-right {
+  margin-left: auto;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.filter-panel-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-surface);
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--motion-duration-short4) var(--motion-easing-standard),
+              color var(--motion-duration-short4) var(--motion-easing-standard);
+}
+.filter-panel-trigger:hover { background: var(--md-sys-color-surface-container-low); color: var(--md-sys-color-on-surface); }
+.filter-panel-trigger.active { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); border-color: transparent; }
+.filter-panel-trigger:focus-visible { outline: 3px solid var(--md-sys-color-primary); outline-offset: 2px; }
+.filter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1;
+}
+.filter-badge[hidden] { display: none; }
+.advanced-filter-panel {
+  position: sticky;
+  top: 120px;
+  z-index: 89;
+  background: var(--md-sys-color-surface-container-low);
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  padding: 0 24px;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height var(--motion-duration-medium2) var(--motion-easing-standard),
+              padding-top var(--motion-duration-medium2) var(--motion-easing-standard),
+              padding-bottom var(--motion-duration-medium2) var(--motion-easing-standard);
+}
+.advanced-filter-panel.open { max-height: 160px; padding-top: 14px; padding-bottom: 14px; }
+.filter-panel-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.filter-panel-inner::-webkit-scrollbar { display: none; }
+.filter-group { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+.filter-group-label {
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+  letter-spacing: 0.3px;
+}
+.filter-group-chips { display: flex; gap: 6px; }
+.filter-divider-v {
+  width: 1px;
+  background: var(--md-sys-color-outline-variant);
+  align-self: stretch;
+  flex-shrink: 0;
+}
+.filter-sort-select {
+  height: 32px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-surface);
+  padding: 0 28px 0 12px;
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23717971' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  min-width: 180px;
+}
+.filter-sort-select:focus-visible { outline: 3px solid var(--md-sys-color-primary); outline-offset: 2px; }
+.filter-clear-btn {
+  height: 32px;
+  padding: 0 12px;
+  border: none;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: none;
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--md-sys-color-primary);
+  cursor: pointer;
+  white-space: nowrap;
+  align-self: flex-end;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.filter-clear-btn:hover { background: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent); }
+.filter-clear-btn:focus-visible { outline: 3px solid var(--md-sys-color-primary); outline-offset: 2px; }
+.filter-clear-btn[hidden] { display: none; }
+
+/* ─── PLAYGROUND CONTROLS ─── */
+.playground-section { display: flex; flex-direction: column; gap: 8px; }
+.playground-label {
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.playground-row { display: flex; align-items: center; gap: 12px; min-height: 40px; }
+.playground-row-label { font-size: 14px; font-weight: 400; color: var(--md-sys-color-on-surface); flex: 1; }
+.output-format-chips { display: flex; gap: 6px; }
+.output-format-chip {
+  height: 32px;
+  padding: 0 16px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-surface);
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  transition: background var(--motion-duration-short4) var(--motion-easing-standard),
+              color var(--motion-duration-short4) var(--motion-easing-standard),
+              border-color var(--motion-duration-short4) var(--motion-easing-standard);
+}
+.output-format-chip.active { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); border-color: transparent; }
+.output-format-chip:focus-visible { outline: 3px solid var(--md-sys-color-primary); outline-offset: 2px; }
+.output-format-chip:disabled { opacity: 0.38; cursor: not-allowed; }
+.fn-schema-wrap { display: none; }
+.fn-schema-wrap.visible { display: block; margin-top: 8px; }
+.fn-schema-wrap md-outlined-text-field { width: 100%; }
+.temp-slider-wrap { display: flex; align-items: center; gap: 12px; flex: 1; }
+.temp-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--md-sys-color-outline-variant);
+  outline: none;
+  cursor: pointer;
+}
+.temp-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--md-sys-color-primary);
+  cursor: pointer;
+}
+.temp-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--md-sys-color-primary);
+  cursor: pointer;
+  border: none;
+}
+.temp-slider:focus-visible { outline: 3px solid var(--md-sys-color-primary); outline-offset: 4px; }
+.temp-value {
+  font-family: var(--md-ref-typeface-mono);
+  font-size: 13px;
+  color: var(--md-sys-color-on-surface);
+  min-width: 28px;
+  text-align: right;
+}
+.sys-prompt-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+  min-height: 32px;
+}
+.sys-prompt-toggle:hover { color: var(--md-sys-color-on-surface); }
+.sys-prompt-toggle:focus-visible { outline: 3px solid var(--md-sys-color-primary); outline-offset: 2px; border-radius: 4px; }
+.sys-prompt-caret { display: inline-block; font-size: 9px; transition: transform var(--motion-duration-short4) var(--motion-easing-standard); }
+.sys-prompt-caret.open { transform: rotate(90deg); }
+.sys-prompt-body { display: none; margin-top: 4px; }
+.sys-prompt-body.open { display: block; }
+.drawer-controls-divider {
+  height: 1px;
+  background: var(--md-sys-color-outline-variant);
+  margin: 4px 0;
 }
 </style>
 </head>
@@ -1189,6 +1398,63 @@ md-secondary-tab {
     <md-filter-chip label="Audio" data-filter="Audio" aria-pressed="false"></md-filter-chip>
     <md-filter-chip label="Multimodal" data-filter="Multimodal" aria-pressed="false"></md-filter-chip>
     <md-filter-chip label="Embeddings" data-filter="Embeddings" aria-pressed="false"></md-filter-chip>
+  </div>
+  <div class="filter-right">
+    <button class="filter-panel-trigger" id="filterPanelTrigger" aria-expanded="false" aria-controls="advancedFilterPanel">
+      Sort &amp; filter
+      <span class="filter-badge" id="filterBadge" hidden aria-label="active filters count"></span>
+    </button>
+  </div>
+</div>
+
+<!-- ═══ ADVANCED FILTER PANEL ═══ -->
+<div class="advanced-filter-panel" id="advancedFilterPanel" role="group" aria-label="Advanced filters">
+  <div class="filter-panel-inner">
+    <div class="filter-group">
+      <div class="filter-group-label">Sort by</div>
+      <select class="filter-sort-select" id="sortSelect" aria-label="Sort models by">
+        <option value="default">Default order</option>
+        <option value="context-desc">Context window (largest first)</option>
+        <option value="cost-asc">Input cost (lowest first)</option>
+        <option value="name-asc">Name (A–Z)</option>
+      </select>
+    </div>
+    <div class="filter-divider-v" aria-hidden="true"></div>
+    <div class="filter-group">
+      <div class="filter-group-label">Context window</div>
+      <div class="filter-group-chips" role="group" aria-label="Context window filter">
+        <md-filter-chip label="≥ 32K" data-ctx="32000" class="ctx-chip" aria-pressed="false"></md-filter-chip>
+        <md-filter-chip label="≥ 128K" data-ctx="128000" class="ctx-chip" aria-pressed="false"></md-filter-chip>
+        <md-filter-chip label="≥ 256K" data-ctx="256000" class="ctx-chip" aria-pressed="false"></md-filter-chip>
+        <md-filter-chip label="1M+" data-ctx="1000000" class="ctx-chip" aria-pressed="false"></md-filter-chip>
+      </div>
+    </div>
+    <div class="filter-divider-v" aria-hidden="true"></div>
+    <div class="filter-group">
+      <div class="filter-group-label">Input cost</div>
+      <div class="filter-group-chips" role="group" aria-label="Input cost filter">
+        <md-filter-chip label="Free / open" data-cost="free" class="cost-chip" aria-pressed="false"></md-filter-chip>
+        <md-filter-chip label="&lt; $0.001/1K" data-cost="0.001" class="cost-chip" aria-pressed="false"></md-filter-chip>
+        <md-filter-chip label="&lt; $0.01/1K" data-cost="0.01" class="cost-chip" aria-pressed="false"></md-filter-chip>
+      </div>
+    </div>
+    <div class="filter-divider-v" aria-hidden="true"></div>
+    <div class="filter-group">
+      <div class="filter-group-label">Tier</div>
+      <div class="filter-group-chips" role="group" aria-label="Performance tier filter">
+        <md-filter-chip label="Fast" data-tier="Fast" class="tier-chip" aria-pressed="false"></md-filter-chip>
+        <md-filter-chip label="Balanced" data-tier="Balanced" class="tier-chip" aria-pressed="false"></md-filter-chip>
+        <md-filter-chip label="Powerful" data-tier="Powerful" class="tier-chip" aria-pressed="false"></md-filter-chip>
+      </div>
+    </div>
+    <div class="filter-divider-v" aria-hidden="true"></div>
+    <div class="filter-group">
+      <div class="filter-group-label">Capabilities</div>
+      <div class="filter-group-chips">
+        <md-filter-chip label="Function calling" id="fcChip" aria-pressed="false"></md-filter-chip>
+      </div>
+    </div>
+    <button class="filter-clear-btn" id="filterClearBtn" hidden aria-label="Clear all advanced filters">Clear filters</button>
   </div>
 </div>
 
@@ -1270,10 +1536,59 @@ md-secondary-tab {
       </md-tabs>
       <div class="drawer-tab-content" id="panelTry">
         <div class="drawer-try-area">
+
+          <!-- System prompt -->
+          <div class="playground-section">
+            <button class="sys-prompt-toggle" id="sysPromptToggle" aria-expanded="false" aria-controls="sysPromptBody">
+              <span class="sys-prompt-caret" id="sysPromptCaret">▶</span>
+              System prompt
+            </button>
+            <div class="sys-prompt-body" id="sysPromptBody">
+              <md-outlined-text-field id="drawerSysPrompt" label="System prompt" type="textarea" rows="3" placeholder="e.g. You are a helpful assistant that responds in JSON."></md-outlined-text-field>
+            </div>
+          </div>
+
+          <div class="drawer-controls-divider"></div>
+
+          <!-- Output format -->
+          <div class="playground-section">
+            <div class="playground-label">Output format</div>
+            <div class="output-format-chips" role="group" aria-label="Output format">
+              <button class="output-format-chip active" id="fmtPlain" aria-pressed="true">Plain text</button>
+              <button class="output-format-chip" id="fmtJson" aria-pressed="false">JSON</button>
+            </div>
+          </div>
+
+          <!-- Function calling -->
+          <div class="playground-section">
+            <div class="playground-row">
+              <span class="playground-row-label">Function calling</span>
+              <md-switch id="fnSwitch" aria-label="Enable function calling"></md-switch>
+            </div>
+            <div class="fn-schema-wrap" id="fnSchemaWrap">
+              <md-outlined-text-field id="fnSchemaField" label="JSON schema" type="textarea" rows="3" placeholder='{"name": "get_weather", "parameters": {"type": "object", "properties": {"location": {"type": "string"}}}}'></md-outlined-text-field>
+            </div>
+          </div>
+
+          <!-- Temperature -->
+          <div class="playground-section">
+            <div class="playground-label">Temperature</div>
+            <div class="playground-row" style="gap: 8px;">
+              <span style="font-size:11px;font-weight:500;color:var(--md-sys-color-on-surface-variant);min-width:24px;">0.0</span>
+              <input class="temp-slider" id="tempSlider" type="range" min="0" max="2" step="0.1" value="0.7" aria-label="Temperature" aria-valuemin="0" aria-valuemax="2">
+              <span style="font-size:11px;font-weight:500;color:var(--md-sys-color-on-surface-variant);min-width:24px;text-align:right;">2.0</span>
+              <span class="temp-value" id="tempValue" aria-live="polite">0.7</span>
+            </div>
+          </div>
+
+          <div class="drawer-controls-divider"></div>
+
+          <!-- Prompt + Run -->
           <md-outlined-text-field id="drawerPrompt" label="Enter a prompt..." type="textarea" rows="4"></md-outlined-text-field>
           <md-filled-button id="drawerRun">Run</md-filled-button>
-          <div class="drawer-response" id="drawerResponse"></div>
+          <div class="drawer-response" id="drawerResponse" aria-live="polite"></div>
           <div class="drawer-token-stats" id="drawerTokenStats"></div>
+
         </div>
       </div>
       <div class="drawer-tab-content" id="panelCode" hidden>
@@ -1540,6 +1855,29 @@ function openDrawer(model) {
   // Store current model for run
   drawer._currentModel = model;
 
+  // Reset playground controls
+  const isEmbedding = model.capability === 'Embeddings';
+  const isMediaOnly = ['Image','Video','Audio'].includes(model.capability);
+  const supportsFormat = !isEmbedding && !isMediaOnly;
+  const supportsFC = model.functionCalling === 'Yes';
+  const fmtPlain = document.getElementById('fmtPlain');
+  const fmtJson = document.getElementById('fmtJson');
+  const fnSwitch = document.getElementById('fnSwitch');
+  fmtPlain.disabled = !supportsFormat;
+  fmtJson.disabled = !supportsFormat;
+  fnSwitch.disabled = !supportsFC;
+  fmtPlain.classList.add('active'); fmtJson.classList.remove('active');
+  fmtPlain.setAttribute('aria-pressed','true'); fmtJson.setAttribute('aria-pressed','false');
+  fnSwitch.selected = false;
+  document.getElementById('fnSchemaWrap').classList.remove('visible');
+  document.getElementById('tempSlider').value = '0.7';
+  document.getElementById('tempValue').textContent = '0.7';
+  document.getElementById('sysPromptBody').classList.remove('open');
+  document.getElementById('sysPromptCaret').classList.remove('open');
+  document.getElementById('sysPromptToggle').setAttribute('aria-expanded','false');
+  const sysPField = document.getElementById('drawerSysPrompt');
+  if (sysPField) sysPField.value = '';
+
   drawer.classList.remove('closing');
   drawer.classList.add('open');
   scrim.classList.add('open');
@@ -1624,49 +1962,154 @@ console.log(result.response.text());`;
   }
 }
 
-// Mock run
+// ─── PLAYGROUND RUNNER ───
 document.getElementById('drawerRun').addEventListener('click', () => {
-  const prompt = document.getElementById('drawerPrompt').value;
+  const prompt = document.getElementById('drawerPrompt').value?.trim();
   if (!prompt) return;
+  const model = drawer._currentModel;
+  const sysPrompt = document.getElementById('drawerSysPrompt')?.value?.trim() || '';
+  const isJson = document.getElementById('fmtJson').classList.contains('active');
+  const fnSwitch = document.getElementById('fnSwitch');
+  const fnOn = fnSwitch && !fnSwitch.disabled && fnSwitch.selected;
+  const fnSchema = fnOn ? document.getElementById('fnSchemaField').value?.trim() : null;
+  const temp = parseFloat(document.getElementById('tempSlider').value);
   const responseEl = document.getElementById('drawerResponse');
   const statsEl = document.getElementById('drawerTokenStats');
   responseEl.textContent = '';
   statsEl.textContent = '';
 
-  const mockResponses = [
-    "That's an interesting question. Let me break this down step by step.\n\nFirst, we need to consider the key factors involved. The approach depends on your specific use case, scale requirements, and latency constraints.\n\nFor most production deployments, I'd recommend starting with a simple implementation and iterating based on real performance data. Premature optimization here could lead to unnecessary complexity.",
-    "Based on the input provided, here's my analysis:\n\nThe data suggests a strong correlation between the variables you've described. The primary driver appears to be the interaction between throughput requirements and model complexity.\n\nI'd recommend benchmarking with your actual workload before making architectural decisions.",
-    "Here's a concise implementation approach:\n\n1. Start with the base configuration\n2. Add your custom preprocessing pipeline\n3. Implement the evaluation loop\n4. Deploy behind a load balancer\n\nThis pattern scales well to millions of requests per day while keeping latency under your target threshold."
-  ];
-  const response = mockResponses[Math.floor(Math.random() * mockResponses.length)];
+  let response;
+  if (fnOn && fnSchema) {
+    response = buildFnCallMockResponse(model, prompt, fnSchema, temp);
+  } else if (isJson) {
+    response = buildJsonMockResponse(model, prompt, sysPrompt, temp, fnOn);
+  } else {
+    response = buildPlainMockResponse(model, prompt, sysPrompt, temp);
+  }
+
   let i = 0;
   const startTime = Date.now();
   const interval = setInterval(() => {
-    if (i < response.length) {
-      responseEl.textContent += response[i];
-      i++;
-    } else {
+    if (i < response.length) { responseEl.textContent += response[i]; i++; }
+    else {
       clearInterval(interval);
       const elapsed = Date.now() - startTime;
       const tokens = Math.floor(response.length * 0.3);
-      statsEl.textContent = `${tokens} tokens · ${elapsed}ms`;
+      const costNum = parseInputCost(model.inputCost);
+      const costStr = costNum === 0 ? 'free model' : costNum !== null ? `~$${(tokens * costNum / 1000).toFixed(6)}` : '';
+      statsEl.textContent = `${tokens} tokens · ${elapsed}ms · temp ${temp.toFixed(1)}${costStr ? ' · ' + costStr : ''}`;
     }
-  }, 12);
+  }, 10);
 });
+
+function buildPlainMockResponse(model, prompt, sysPrompt, temp) {
+  const sysNote = sysPrompt ? `[System: "${sysPrompt.substring(0,60)}${sysPrompt.length>60?'...':''}"]\n\n` : '';
+  const tone = temp > 1.2 ? 'creative and exploratory' : temp < 0.4 ? 'precise and deterministic' : 'balanced';
+  const responses = [
+    `${sysNote}Given the constraints you've outlined, the most effective approach is to start with a clear problem decomposition. The ${model.tier.toLowerCase()} performance profile of ${model.name} means you'll see ${temp > 1.0 ? 'more varied outputs' : 'consistent, reliable results'} at temperature ${temp.toFixed(1)}.\n\nFor production: benchmark against your actual workload, not synthetic tests. Context window of ${model.context} gives you flexibility for full-document processing.`,
+    `${sysNote}Here's a concrete implementation path (tone: ${tone}):\n\n1. Define your evaluation criteria first\n2. Run baseline with default settings (temp ${temp.toFixed(1)})\n3. Adjust temperature based on output variance\n4. Scale horizontally once quality gates pass\n\nThis pattern works reliably at ${model.tier === 'Fast' ? 'high throughput' : 'enterprise'} scale with ${model.name}.`,
+    `${sysNote}The primary consideration is throughput vs. accuracy. ${model.name}'s ${model.context} context window gives you flexibility to include full document context. Input cost: ${model.inputCost}.\n\nRecommendation: start simple, measure, then optimize.`
+  ];
+  return responses[Math.floor(Math.random() * responses.length)];
+}
+
+function buildJsonMockResponse(model, prompt, sysPrompt, temp, fnOn) {
+  return JSON.stringify({
+    model: model.name,
+    temperature: temp,
+    prompt_summary: prompt.substring(0,80) + (prompt.length > 80 ? '...' : ''),
+    response: {
+      analysis: "The request requires a structured breakdown of the key variables involved.",
+      recommendation: model.tier === 'Powerful'
+        ? "Leverage the extended context window to process full document sets in a single call."
+        : model.tier === 'Fast'
+          ? "Optimize for latency — use streaming and cache frequent queries."
+          : "Balance cost and quality by batching non-latency-sensitive requests.",
+      confidence: temp > 1.2 ? 0.72 : temp < 0.4 ? 0.97 : 0.88,
+      tokens_estimated: Math.floor(120 + Math.random() * 200)
+    },
+    metadata: { model_tier: model.tier, context_window: model.context, function_calling: fnOn }
+  }, null, 2);
+}
+
+function buildFnCallMockResponse(model, prompt, fnSchema, temp) {
+  let fnName = 'unknown_function';
+  try { const p = JSON.parse(fnSchema); fnName = p.name || fnName; } catch (_) {}
+  return JSON.stringify({
+    type: "function_call",
+    function: { name: fnName, arguments: { query: prompt.substring(0,60), confidence: temp > 1.0 ? 0.78 : 0.94 } },
+    model: model.name,
+    finish_reason: "function_call"
+  }, null, 2);
+}
 
 // ─── FILTERS ───
 let activeCategory = null;
+let activeContextMin = null;
+let activeCostMax = null;
+let activeTier = null;
+let activeFnCalling = false;
+let activeSort = 'default';
+
+// ─── PARSE HELPERS ───
+function parseInputCost(raw) {
+  if (!raw) return null;
+  const s = raw.toLowerCase();
+  if (s === 'free (open)' || s === 'open' || s === 'free') return 0;
+  const m = s.match(/\$?([\d.]+)/);
+  if (!m) return null;
+  return parseFloat(m[1]);
+}
+function parseContext(raw) {
+  if (!raw || raw === 'N/A') return null;
+  const stripped = raw.replace(/[^0-9]/g, '');
+  const n = parseInt(stripped, 10);
+  return isNaN(n) ? null : n;
+}
+function sortModels(arr) {
+  if (activeSort === 'default') return arr;
+  const copy = [...arr];
+  if (activeSort === 'context-desc') {
+    copy.sort((a, b) => (parseContext(b.context) ?? -1) - (parseContext(a.context) ?? -1));
+  } else if (activeSort === 'cost-asc') {
+    copy.sort((a, b) => (parseInputCost(a.inputCost) ?? Infinity) - (parseInputCost(b.inputCost) ?? Infinity));
+  } else if (activeSort === 'name-asc') {
+    copy.sort((a, b) => a.name.localeCompare(b.name));
+  }
+  return copy;
+}
+function countActiveAdvancedFilters() {
+  let n = 0;
+  if (activeContextMin !== null) n++;
+  if (activeCostMax !== null) n++;
+  if (activeTier !== null) n++;
+  if (activeFnCalling) n++;
+  if (activeSort !== 'default') n++;
+  return n;
+}
+function updateFilterBadge() {
+  const n = countActiveAdvancedFilters();
+  const badge = document.getElementById('filterBadge');
+  const trigger = document.getElementById('filterPanelTrigger');
+  const clearBtn = document.getElementById('filterClearBtn');
+  if (n > 0) {
+    badge.textContent = String(n);
+    badge.removeAttribute('hidden');
+    trigger.classList.add('active');
+    clearBtn.removeAttribute('hidden');
+  } else {
+    badge.setAttribute('hidden', '');
+    trigger.classList.remove('active');
+    clearBtn.setAttribute('hidden', '');
+  }
+}
 
 function applyFilters() {
   const searchTerm = document.getElementById('searchField').value?.toLowerCase() || '';
 
-  const filtered = models.filter(m => {
-    // Category filter
-    if (activeCategory && m.capability.toLowerCase() !== activeCategory.toLowerCase()) {
-      // Special case: "Text" filter also matches "Text + code" capability
-      if (activeCategory === 'Text' && m.capability === 'Text') { /* ok */ }
-      else if (activeCategory !== m.capability) return false;
-    }
+  let filtered = models.filter(m => {
+    // Category
+    if (activeCategory && m.capability !== activeCategory) return false;
 
     // Search
     if (searchTerm) {
@@ -1674,8 +2117,31 @@ function applyFilters() {
       if (!searchable.includes(searchTerm)) return false;
     }
 
+    // Context window
+    if (activeContextMin !== null) {
+      const ctx = parseContext(m.context);
+      if (ctx === null || ctx < activeContextMin) return false;
+    }
+
+    // Input cost
+    if (activeCostMax !== null) {
+      const c = parseInputCost(m.inputCost);
+      if (c === null) return false;
+      if (activeCostMax === 'free') { if (c !== 0) return false; }
+      else { if (c > activeCostMax) return false; }
+    }
+
+    // Tier
+    if (activeTier !== null && m.tier !== activeTier) return false;
+
+    // Function calling
+    if (activeFnCalling && m.functionCalling !== 'Yes') return false;
+
     return true;
   });
+
+  filtered = sortModels(filtered);
+  updateFilterBadge();
 
   // Animate transition
   const grid = document.getElementById('modelGrid');
@@ -1715,6 +2181,80 @@ document.querySelectorAll('.filter-cluster.category md-filter-chip').forEach(chi
 });
 
 // Search
+// ─── ADVANCED FILTER PANEL WIRING ───
+const filterPanelTrigger = document.getElementById('filterPanelTrigger');
+const advancedFilterPanel = document.getElementById('advancedFilterPanel');
+filterPanelTrigger.addEventListener('click', () => {
+  const isOpen = advancedFilterPanel.classList.toggle('open');
+  filterPanelTrigger.setAttribute('aria-expanded', String(isOpen));
+});
+document.getElementById('sortSelect').addEventListener('change', (e) => {
+  activeSort = e.target.value;
+  applyFilters();
+});
+document.querySelectorAll('.ctx-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const val = parseInt(chip.dataset.ctx, 10);
+    if (activeContextMin === val) { activeContextMin = null; chip.selected = false; }
+    else { activeContextMin = val; document.querySelectorAll('.ctx-chip').forEach(c => { c.selected = false; }); chip.selected = true; }
+    applyFilters();
+  });
+});
+document.querySelectorAll('.cost-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const raw = chip.dataset.cost;
+    const val = raw === 'free' ? 'free' : parseFloat(raw);
+    if (activeCostMax === val) { activeCostMax = null; chip.selected = false; }
+    else { activeCostMax = val; document.querySelectorAll('.cost-chip').forEach(c => { c.selected = false; }); chip.selected = true; }
+    applyFilters();
+  });
+});
+document.querySelectorAll('.tier-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const val = chip.dataset.tier;
+    if (activeTier === val) { activeTier = null; chip.selected = false; }
+    else { activeTier = val; document.querySelectorAll('.tier-chip').forEach(c => { c.selected = false; }); chip.selected = true; }
+    applyFilters();
+  });
+});
+document.getElementById('fcChip').addEventListener('click', () => {
+  activeFnCalling = !activeFnCalling;
+  document.getElementById('fcChip').selected = activeFnCalling;
+  applyFilters();
+});
+document.getElementById('filterClearBtn').addEventListener('click', () => {
+  activeContextMin = null; activeCostMax = null; activeTier = null; activeFnCalling = false; activeSort = 'default';
+  document.getElementById('sortSelect').value = 'default';
+  document.querySelectorAll('.ctx-chip, .cost-chip, .tier-chip').forEach(c => { c.selected = false; });
+  document.getElementById('fcChip').selected = false;
+  applyFilters();
+});
+
+// ─── PLAYGROUND CONTROLS WIRING ───
+document.getElementById('sysPromptToggle').addEventListener('click', () => {
+  const body = document.getElementById('sysPromptBody');
+  const caret = document.getElementById('sysPromptCaret');
+  const isOpen = body.classList.toggle('open');
+  caret.classList.toggle('open', isOpen);
+  document.getElementById('sysPromptToggle').setAttribute('aria-expanded', String(isOpen));
+});
+['fmtPlain', 'fmtJson'].forEach(id => {
+  document.getElementById(id).addEventListener('click', () => {
+    document.getElementById('fmtPlain').classList.toggle('active', id === 'fmtPlain');
+    document.getElementById('fmtJson').classList.toggle('active', id === 'fmtJson');
+    document.getElementById('fmtPlain').setAttribute('aria-pressed', id === 'fmtPlain' ? 'true' : 'false');
+    document.getElementById('fmtJson').setAttribute('aria-pressed', id === 'fmtJson' ? 'true' : 'false');
+  });
+});
+document.getElementById('fnSwitch').addEventListener('change', (e) => {
+  document.getElementById('fnSchemaWrap').classList.toggle('visible', e.target.selected);
+});
+const tempSlider = document.getElementById('tempSlider');
+const tempValue = document.getElementById('tempValue');
+tempSlider.addEventListener('input', () => {
+  tempValue.textContent = parseFloat(tempSlider.value).toFixed(1);
+});
+
 let searchDebounce;
 document.getElementById('searchField').addEventListener('input', () => {
   clearTimeout(searchDebounce);
