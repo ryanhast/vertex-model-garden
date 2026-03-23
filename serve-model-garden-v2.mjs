@@ -8,7 +8,9 @@ const port = parseInt(process.argv.find((a, i, arr) => arr[i - 1] === '--port') 
 
 createServer((req, res) => {
   try {
-    const file = req.url === '/green' ? 'vertex-model-garden-v2.html' : 'vertex-model-garden-google.html';
+    const file = req.url === '/green' ? 'vertex-model-garden-v2.html'
+               : req.url === '/mockups' ? 'usecase-mockups.html'
+               : 'vertex-model-garden-google.html';
     const html = readFileSync(resolve(__dirname, file), 'utf8');
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     res.end(html);

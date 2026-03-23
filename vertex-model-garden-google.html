@@ -19,11 +19,12 @@
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Text:wght@400;500&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Mono:wght@400;500&display=swap">
-<!-- Material Symbols removed — using text labels instead -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
 
 <style>
 /* ─── RESET & ROOT ─── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { overflow-x: hidden; }
 
 :root {
   --md-ref-typeface-brand: 'Google Sans Text', sans-serif;
@@ -363,9 +364,6 @@ md-secondary-tab {
 .masthead {
   margin-top: 64px;
   padding: 32px 24px 24px;
-  max-width: 1280px;
-  margin-left: auto;
-  margin-right: auto;
 }
 .masthead-headline {
   font-family: var(--md-ref-typeface-brand);
@@ -383,8 +381,6 @@ md-secondary-tab {
   margin-top: 8px;
 }
 .masthead-divider {
-  max-width: 1280px;
-  margin: 0 auto;
   padding: 0 24px;
 }
 .masthead-divider hr {
@@ -405,46 +401,78 @@ md-secondary-tab {
   display: flex;
   align-items: center;
   gap: 12px;
-  overflow-x: auto;
-  scrollbar-width: none;
 }
-.filter-bar::-webkit-scrollbar { display: none; }
-.filter-cluster {
+.filter-bar-search {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-surface);
+  transition: border-color 200ms var(--motion-easing-standard);
+}
+.filter-bar-search:focus-within {
+  border-color: var(--md-sys-color-primary);
+}
+.filter-bar-search-icon {
+  font-size: 18px;
+  color: var(--md-sys-color-on-surface-variant);
   flex-shrink: 0;
 }
-.filter-cluster.category {
-  overflow-x: auto;
-  scrollbar-width: none;
-  flex-shrink: 0;
+.filter-bar-search-input {
+  border: none;
+  outline: none;
+  background: none;
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--md-sys-color-on-surface);
+  width: 100%;
+  min-width: 0;
 }
-.filter-cluster.category::-webkit-scrollbar { display: none; }
-.filter-bar md-outlined-select {
-  --md-outlined-select-text-field-container-shape: var(--md-sys-shape-corner-full);
-  min-width: 120px;
+.filter-bar-search-input::placeholder {
+  color: var(--md-sys-color-on-surface-variant);
+}
+.model-count-row {
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-bottom: 16px;
+}
+.filter-arrow {
+  font-size: 10px;
+  transition: transform 200ms var(--motion-easing-standard);
+}
+.filter-panel-trigger[aria-expanded="true"] .filter-arrow {
+  transform: rotate(180deg);
 }
 
 /* ─── MAIN CONTENT ─── */
 .main-content {
-  max-width: 1280px;
-  margin: 0 auto;
   padding: 24px;
+  overflow: hidden;
 }
 
 /* ─── MODEL GRID ─── */
 .model-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
 }
+@media (min-width: 1600px) {
+  .model-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
 @media (max-width: 840px) {
-  .model-grid { grid-template-columns: repeat(2, 1fr); }
+  .model-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .card-featured { grid-column: span 1 !important; }
 }
 @media (max-width: 600px) {
-  .model-grid { grid-template-columns: 1fr; }
+  .model-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ─── MODEL CARD ─── */
@@ -459,6 +487,7 @@ md-secondary-tab {
   flex-direction: column;
   gap: 8px;
   overflow: hidden;
+  min-width: 0;
   /* M3 elevation level 1 */
   box-shadow: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 1px rgba(0,0,0,0.15);
 }
@@ -496,9 +525,73 @@ md-secondary-tab {
   outline-offset: 2px;
 }
 
+/* ─── Animated glow for featured card ─── */
+@property --glow-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes glow-orbit {
+  to { --glow-angle: 360deg; }
+}
+@keyframes glow-breathe {
+  0% { opacity: 0.25; }
+  17% { opacity: 0.55; }
+  33% { opacity: 0.3; }
+  52% { opacity: 0.6; }
+  71% { opacity: 0.2; }
+  85% { opacity: 0.5; }
+  100% { opacity: 0.25; }
+}
 .card-featured {
   grid-column: span 2;
+  background: transparent;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+  box-shadow: none;
+}
+/* Opaque fill behind card content, above the glow */
+.card-featured::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
   background: var(--md-sys-color-primary-container);
+  z-index: -1;
+}
+/* Glow orbits behind everything */
+.card-featured::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: calc(var(--md-sys-shape-corner-large) + 4px);
+  z-index: -2;
+  background: conic-gradient(
+    from var(--glow-angle),
+    transparent 0%,
+    #4285F4 8%,
+    transparent 18%,
+    transparent 32%,
+    #34A853 38%,
+    transparent 48%,
+    transparent 58%,
+    #FBBC05 63%,
+    transparent 70%,
+    transparent 78%,
+    #EA4335 83%,
+    transparent 93%
+  );
+  filter: blur(4px);
+  animation: glow-orbit 8s linear infinite,
+             glow-breathe 7s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-featured::before {
+    animation: none;
+    opacity: 0;
+  }
 }
 .card-featured .card-model-name {
   font-family: var(--md-ref-typeface-brand);
@@ -538,10 +631,12 @@ md-secondary-tab {
   }
   .card-featured:hover {
     background: var(--md-sys-color-secondary-container);
-    /* M3 level 3 — higher contrast for tinted surface */
-    box-shadow: 0 2px 3px 0 rgba(0,0,0,0.30), 0 6px 10px 4px rgba(0,0,0,0.20);
+    box-shadow: none;
     border-radius: var(--md-sys-shape-corner-medium);
     transform: translateY(-4px);
+  }
+  .card-featured:hover::after {
+    background: var(--md-sys-color-secondary-container);
   }
   .card-featured:not(:hover) {
     transition: background var(--motion-duration-medium2) var(--motion-easing-spring),
@@ -767,117 +862,101 @@ md-secondary-tab {
   outline-offset: 2px;
 }
 
-/* ─── COMPARISON STRIP ─── */
-.comparison-section {
-  margin: 48px 0 32px;
+/* ─── USE CASE GRID ─── */
+.usecase-section {
+  padding: 0 24px 16px;
 }
-.comparison-heading {
-  font-family: var(--md-ref-typeface-brand);
-  font-size: 22px;
-  font-weight: 400;
-  color: var(--md-sys-color-on-surface);
-  margin-bottom: 16px;
+.usecase-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
 }
-.comparison-strip-wrapper {
-  position: relative;
-}
-.comparison-strip {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  padding-bottom: 8px;
-}
-.comparison-strip::-webkit-scrollbar { display: none; }
-.comparison-card {
-  min-width: 300px;
-  flex: 1;
-  flex-shrink: 0;
-  scroll-snap-align: start;
-  background: var(--md-sys-color-surface-container-low);
-  border: none;
-  border-radius: var(--md-sys-shape-corner-large);
-  padding: 24px;
+.usecase-card {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 12px;
-  /* M3 elevation level 1 */
-  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 1px rgba(0,0,0,0.15);
+  padding: 24px 16px 20px;
+  background: var(--md-sys-color-surface);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-large);
+  cursor: pointer;
+  transition: background 200ms var(--motion-easing-standard),
+              border-color 200ms var(--motion-easing-standard);
 }
-.comparison-scenario {
+.usecase-card:hover {
+  background: var(--md-sys-color-surface-container-low);
+}
+.usecase-card:focus-visible {
+  outline: 3px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
+.usecase-card.active {
+  background: var(--md-sys-color-primary-container);
+  border-color: var(--md-sys-color-primary);
+}
+.usecase-icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.usecase-icon-circle .material-symbols-outlined {
+  font-size: 24px;
+}
+.usecase-card-label {
   font-family: var(--md-ref-typeface-plain);
   font-size: 14px;
   font-weight: 500;
   color: var(--md-sys-color-on-surface);
+  text-align: center;
+  line-height: 1.3;
 }
-.comparison-rec {
-  font-family: var(--md-ref-typeface-plain);
-  font-size: 16px;
-  font-weight: 500;
+.usecase-card.active .usecase-card-label {
   color: var(--md-sys-color-primary);
 }
-.comparison-why {
-  font-family: var(--md-ref-typeface-plain);
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--md-sys-color-on-surface-variant);
-  line-height: 1.5;
-}
-.comparison-vs {
-  font-family: var(--md-ref-typeface-plain);
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--md-sys-color-on-surface-variant);
-  padding-top: 8px;
-  border-top: 1px solid var(--md-sys-color-outline-variant);
-  opacity: 0.7;
-}
-.comparison-dots {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 12px;
-}
-.comparison-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--md-sys-color-outline-variant);
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  min-height: 0;
-}
-.comparison-dot:focus-visible {
-  outline: 3px solid var(--md-sys-color-primary);
-  outline-offset: 2px;
-}
-.comparison-dot.active { background: var(--md-sys-color-primary); }
-.comparison-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: var(--md-sys-color-surface-container-low);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
+/* Expand/collapse */
+.usecase-card-extra { display: none; }
+.usecase-grid.expanded .usecase-card-extra { display: flex; }
+.usecase-expand-btn {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 4px;
+  margin: 8px auto 0;
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: none;
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--md-sys-color-primary);
   cursor: pointer;
-  z-index: 2;
-  color: var(--md-sys-color-on-surface);
+  min-height: 48px;
 }
-.comparison-arrow:focus-visible {
+.usecase-expand-btn:hover {
+  background: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
+}
+.usecase-expand-btn:focus-visible {
   outline: 3px solid var(--md-sys-color-primary);
   outline-offset: 2px;
 }
-.comparison-arrow.left { left: -20px; }
-.comparison-arrow.right { right: -20px; }
+.usecase-expand-arrow {
+  font-size: 10px;
+  transition: transform 200ms var(--motion-easing-standard);
+}
+.usecase-expand-btn[aria-expanded="true"] .usecase-expand-arrow {
+  transform: rotate(180deg);
+}
+@media (max-width: 840px) {
+  .usecase-grid { grid-template-columns: repeat(3, 1fr); }
+}
 @media (max-width: 600px) {
-  .comparison-arrow { display: none; }
+  .usecase-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .usecase-card { padding: 20px 12px 16px; }
+  .usecase-card-label { font-size: 13px; }
 }
 
 /* ─── FINAL CTA ─── */
@@ -1174,7 +1253,6 @@ md-secondary-tab {
               color var(--motion-duration-short4) var(--motion-easing-standard);
 }
 .filter-panel-trigger:hover { background: var(--md-sys-color-surface-container-low); color: var(--md-sys-color-on-surface); }
-.filter-panel-trigger.active { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); border-color: transparent; }
 .filter-panel-trigger:focus-visible { outline: 3px solid var(--md-sys-color-primary); outline-offset: 2px; }
 .filter-badge {
   display: inline-flex;
@@ -1190,20 +1268,45 @@ md-secondary-tab {
   line-height: 1;
 }
 .filter-badge[hidden] { display: none; }
-.advanced-filter-panel {
+.combined-filter-panel {
   position: sticky;
   top: 120px;
   z-index: 89;
   background: var(--md-sys-color-surface-container-low);
-  border-bottom: 1px solid var(--md-sys-color-outline-variant);
-  padding: 0 24px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-medium);
+  margin: 0 24px;
+  padding: 0;
   overflow: hidden;
   max-height: 0;
-  transition: max-height var(--motion-duration-medium2) var(--motion-easing-standard),
-              padding-top var(--motion-duration-medium2) var(--motion-easing-standard),
-              padding-bottom var(--motion-duration-medium2) var(--motion-easing-standard);
+  opacity: 0;
+  transition: max-height 250ms var(--motion-easing-emphasized),
+              opacity 250ms var(--motion-easing-emphasized),
+              padding 250ms var(--motion-easing-emphasized),
+              margin-bottom 250ms var(--motion-easing-emphasized);
 }
-.advanced-filter-panel.open { max-height: 160px; padding-top: 14px; padding-bottom: 14px; }
+.combined-filter-panel.open {
+  max-height: 220px;
+  opacity: 1;
+  padding: 16px;
+  margin-bottom: 8px;
+}
+.filter-panel-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.filter-panel-row + .filter-panel-row {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+}
+.filter-cluster {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
 .filter-panel-inner {
   display: flex;
   align-items: flex-start;
@@ -1370,12 +1473,6 @@ md-secondary-tab {
     <span class="nav-divider">/</span>
     <span class="nav-subtitle">Model Garden</span>
   </div>
-  <div class="nav-center">
-    <div class="nav-search-wrapper">
-      <span class="nav-search-icon">⌕</span>
-      <input class="nav-search-input" id="searchField" type="text" placeholder="Search models" aria-label="Search models">
-    </div>
-  </div>
   <div class="nav-avatar" aria-label="User account">
     <div class="avatar-circle">R</div>
   </div>
@@ -1388,120 +1485,96 @@ md-secondary-tab {
     <p class="masthead-sub">Explore and deploy 200+ foundation models from Google, Anthropic, Meta, and more.</p>
   </div>
 </header>
-<div class="masthead-divider"><hr></div>
+<!-- ═══ USE CASE CARDS ═══ -->
+<section class="usecase-section" id="usecaseSection">
+  <div class="usecase-grid" id="usecaseGrid"></div>
+</section>
 
 <!-- ═══ FILTER BAR ═══ -->
 <div class="filter-bar anim-slide-down" id="filterBar">
-  <div class="filter-cluster category" role="group" aria-label="Category filters">
-    <md-filter-chip label="All" id="filterAll" selected aria-pressed="true"></md-filter-chip>
-    <md-filter-chip label="Text + code" data-filter="Text" aria-pressed="false"></md-filter-chip>
-    <md-filter-chip label="Image" data-filter="Image" aria-pressed="false"></md-filter-chip>
-    <md-filter-chip label="Video" data-filter="Video" aria-pressed="false"></md-filter-chip>
-    <md-filter-chip label="Audio" data-filter="Audio" aria-pressed="false"></md-filter-chip>
-    <md-filter-chip label="Multimodal" data-filter="Multimodal" aria-pressed="false"></md-filter-chip>
-    <md-filter-chip label="Embeddings" data-filter="Embeddings" aria-pressed="false"></md-filter-chip>
+  <div class="filter-bar-search">
+    <span class="filter-bar-search-icon material-symbols-outlined" aria-hidden="true">search</span>
+    <input class="filter-bar-search-input" id="searchField" type="text" placeholder="Search models" aria-label="Search models">
   </div>
   <div class="filter-right">
-    <button class="filter-panel-trigger" id="filterPanelTrigger" aria-expanded="false" aria-controls="advancedFilterPanel">
-      Sort &amp; filter
+    <button class="filter-panel-trigger" id="filterPanelTrigger" aria-expanded="false" aria-controls="combinedFilterPanel">
+      <span class="material-symbols-outlined" aria-hidden="true" style="font-size: 18px;">tune</span>
+      Filter &amp; sort
+      <span class="filter-arrow" id="filterArrow">&#x25BE;</span>
       <span class="filter-badge" id="filterBadge" hidden aria-label="active filters count"></span>
     </button>
   </div>
 </div>
 
 <!-- ═══ ADVANCED FILTER PANEL ═══ -->
-<div class="advanced-filter-panel" id="advancedFilterPanel" role="group" aria-label="Advanced filters">
-  <div class="filter-panel-inner">
-    <div class="filter-group">
-      <div class="filter-group-label">Sort by</div>
-      <select class="filter-sort-select" id="sortSelect" aria-label="Sort models by">
-        <option value="default">Default order</option>
-        <option value="context-desc">Context window (largest first)</option>
-        <option value="cost-asc">Input cost (lowest first)</option>
-        <option value="name-asc">Name (A–Z)</option>
-      </select>
+<div class="combined-filter-panel" id="combinedFilterPanel" role="group" aria-label="Filters and sort">
+  <div class="filter-panel-row">
+    <div class="filter-cluster category" role="group" aria-label="Category filters">
+      <md-filter-chip label="All" id="filterAll" selected aria-pressed="true"></md-filter-chip>
+      <md-filter-chip label="Text + code" data-filter="Text" aria-pressed="false"></md-filter-chip>
+      <md-filter-chip label="Image" data-filter="Image" aria-pressed="false"></md-filter-chip>
+      <md-filter-chip label="Video" data-filter="Video" aria-pressed="false"></md-filter-chip>
+      <md-filter-chip label="Audio" data-filter="Audio" aria-pressed="false"></md-filter-chip>
+      <md-filter-chip label="Multimodal" data-filter="Multimodal" aria-pressed="false"></md-filter-chip>
+      <md-filter-chip label="Embeddings" data-filter="Embeddings" aria-pressed="false"></md-filter-chip>
     </div>
-    <div class="filter-divider-v" aria-hidden="true"></div>
-    <div class="filter-group">
-      <div class="filter-group-label">Context window</div>
-      <div class="filter-group-chips" role="group" aria-label="Context window filter">
-        <md-filter-chip label="≥ 32K" data-ctx="32000" class="ctx-chip" aria-pressed="false"></md-filter-chip>
-        <md-filter-chip label="≥ 128K" data-ctx="128000" class="ctx-chip" aria-pressed="false"></md-filter-chip>
-        <md-filter-chip label="≥ 256K" data-ctx="256000" class="ctx-chip" aria-pressed="false"></md-filter-chip>
-        <md-filter-chip label="1M+" data-ctx="1000000" class="ctx-chip" aria-pressed="false"></md-filter-chip>
+  </div>
+  <div class="filter-panel-row">
+    <div class="filter-panel-inner">
+      <div class="filter-group">
+        <div class="filter-group-label">Sort by</div>
+        <select class="filter-sort-select" id="sortSelect" aria-label="Sort models by">
+          <option value="default">Default order</option>
+          <option value="context-desc">Context window (largest first)</option>
+          <option value="cost-asc">Input cost (lowest first)</option>
+          <option value="name-asc">Name (A–Z)</option>
+        </select>
       </div>
-    </div>
-    <div class="filter-divider-v" aria-hidden="true"></div>
-    <div class="filter-group">
-      <div class="filter-group-label">Input cost</div>
-      <div class="filter-group-chips" role="group" aria-label="Input cost filter">
-        <md-filter-chip label="Free / open" data-cost="free" class="cost-chip" aria-pressed="false"></md-filter-chip>
-        <md-filter-chip label="&lt; $0.001/1K" data-cost="0.001" class="cost-chip" aria-pressed="false"></md-filter-chip>
-        <md-filter-chip label="&lt; $0.01/1K" data-cost="0.01" class="cost-chip" aria-pressed="false"></md-filter-chip>
+      <div class="filter-divider-v" aria-hidden="true"></div>
+      <div class="filter-group">
+        <div class="filter-group-label">Context window</div>
+        <div class="filter-group-chips" role="group" aria-label="Context window filter">
+          <md-filter-chip label="≥ 32K" data-ctx="32000" class="ctx-chip" aria-pressed="false"></md-filter-chip>
+          <md-filter-chip label="≥ 128K" data-ctx="128000" class="ctx-chip" aria-pressed="false"></md-filter-chip>
+          <md-filter-chip label="≥ 256K" data-ctx="256000" class="ctx-chip" aria-pressed="false"></md-filter-chip>
+          <md-filter-chip label="1M+" data-ctx="1000000" class="ctx-chip" aria-pressed="false"></md-filter-chip>
+        </div>
       </div>
-    </div>
-    <div class="filter-divider-v" aria-hidden="true"></div>
-    <div class="filter-group">
-      <div class="filter-group-label">Tier</div>
-      <div class="filter-group-chips" role="group" aria-label="Performance tier filter">
-        <md-filter-chip label="Fast" data-tier="Fast" class="tier-chip" aria-pressed="false"></md-filter-chip>
-        <md-filter-chip label="Balanced" data-tier="Balanced" class="tier-chip" aria-pressed="false"></md-filter-chip>
-        <md-filter-chip label="Powerful" data-tier="Powerful" class="tier-chip" aria-pressed="false"></md-filter-chip>
+      <div class="filter-divider-v" aria-hidden="true"></div>
+      <div class="filter-group">
+        <div class="filter-group-label">Input cost</div>
+        <div class="filter-group-chips" role="group" aria-label="Input cost filter">
+          <md-filter-chip label="Free / open" data-cost="free" class="cost-chip" aria-pressed="false"></md-filter-chip>
+          <md-filter-chip label="&lt; $0.001/1K" data-cost="0.001" class="cost-chip" aria-pressed="false"></md-filter-chip>
+          <md-filter-chip label="&lt; $0.01/1K" data-cost="0.01" class="cost-chip" aria-pressed="false"></md-filter-chip>
+        </div>
       </div>
-    </div>
-    <div class="filter-divider-v" aria-hidden="true"></div>
-    <div class="filter-group">
-      <div class="filter-group-label">Capabilities</div>
-      <div class="filter-group-chips">
-        <md-filter-chip label="Function calling" id="fcChip" aria-pressed="false"></md-filter-chip>
+      <div class="filter-divider-v" aria-hidden="true"></div>
+      <div class="filter-group">
+        <div class="filter-group-label">Tier</div>
+        <div class="filter-group-chips" role="group" aria-label="Performance tier filter">
+          <md-filter-chip label="Fast" data-tier="Fast" class="tier-chip" aria-pressed="false"></md-filter-chip>
+          <md-filter-chip label="Balanced" data-tier="Balanced" class="tier-chip" aria-pressed="false"></md-filter-chip>
+          <md-filter-chip label="Powerful" data-tier="Powerful" class="tier-chip" aria-pressed="false"></md-filter-chip>
+        </div>
       </div>
+      <div class="filter-divider-v" aria-hidden="true"></div>
+      <div class="filter-group">
+        <div class="filter-group-label">Capabilities</div>
+        <div class="filter-group-chips">
+          <md-filter-chip label="Function calling" id="fcChip" aria-pressed="false"></md-filter-chip>
+        </div>
+      </div>
+      <button class="filter-clear-btn" id="filterClearBtn" hidden aria-label="Clear all filters">Clear filters</button>
     </div>
-    <button class="filter-clear-btn" id="filterClearBtn" hidden aria-label="Clear all advanced filters">Clear filters</button>
   </div>
 </div>
 
 <!-- ═══ MAIN CONTENT ═══ -->
 <main class="main-content">
+  <div class="model-count-row" id="filterModelCount"></div>
   <div class="model-grid" id="modelGrid"></div>
   <div class="empty-state" id="emptyState"><p>No models match — try a different search</p></div>
-
-  <!-- ═══ COMPARISON STRIP ═══ -->
-  <section class="comparison-section" id="comparisonSection">
-    <h2 class="comparison-heading">Not sure which model?</h2>
-    <div class="comparison-strip-wrapper">
-      <button class="comparison-arrow left" aria-label="Scroll left" onclick="document.querySelector('.comparison-strip').scrollBy({left:-300,behavior:'smooth'})">
-        ←
-      </button>
-      <div class="comparison-strip" id="comparisonStrip">
-        <div class="comparison-card">
-          <div class="comparison-scenario">For a customer support bot</div>
-          <div class="comparison-rec">Gemini 2.0 Flash</div>
-          <div class="comparison-why">Low latency matters more than depth. Flash handles conversational turns at &lt; 100ms.</div>
-          <div class="comparison-vs">vs Claude 3.5 Haiku for nuanced responses</div>
-        </div>
-        <div class="comparison-card">
-          <div class="comparison-scenario">For document analysis</div>
-          <div class="comparison-rec">Gemini 2.5 Pro</div>
-          <div class="comparison-why">1M+ token context. Send the whole document, not chunks.</div>
-          <div class="comparison-vs">vs Claude 3.7 Sonnet for legal/contractual reasoning</div>
-        </div>
-        <div class="comparison-card">
-          <div class="comparison-scenario">For image generation at scale</div>
-          <div class="comparison-rec">Imagen 4</div>
-          <div class="comparison-why">Google's latest. Photorealistic, fast, commercially safe.</div>
-          <div class="comparison-vs">vs Stable Diffusion 3.5 for open-source workflows</div>
-        </div>
-      </div>
-      <button class="comparison-arrow right" aria-label="Scroll right" onclick="document.querySelector('.comparison-strip').scrollBy({left:300,behavior:'smooth'})">
-        →
-      </button>
-    </div>
-    <div class="comparison-dots">
-      <button class="comparison-dot active" aria-label="Slide 1"></button>
-      <button class="comparison-dot" aria-label="Slide 2"></button>
-      <button class="comparison-dot" aria-label="Slide 3"></button>
-    </div>
-  </section>
 
   <!-- ═══ FINAL CTA ═══ -->
   <section class="final-cta">
@@ -1674,13 +1747,19 @@ const providerColors = {
 function renderGrid(filteredModels) {
   const grid = document.getElementById('modelGrid');
   const empty = document.getElementById('emptyState');
+  // Preserve height during re-render to prevent scroll jump
+  const prevHeight = grid.offsetHeight;
+  grid.style.minHeight = prevHeight + 'px';
   grid.innerHTML = '';
 
+  const isFiltered = filteredModels.length !== models.length || activeUseCase !== null;
   if (filteredModels.length === 0) {
     empty.classList.add('visible');
+    updateModelCount(0, true);
     return;
   }
   empty.classList.remove('visible');
+  updateModelCount(filteredModels.length, isFiltered);
 
   let cardIndex = 0;
   const interstitialInserted = { done: false };
@@ -1693,7 +1772,7 @@ function renderGrid(filteredModels) {
       interstitialInserted.done = true;
     }
 
-    const card = createModelCard(model, cardIndex);
+    const card = createModelCard(model, cardIndex, i === 0);
     grid.appendChild(card);
     cardIndex++;
   });
@@ -1701,14 +1780,18 @@ function renderGrid(filteredModels) {
   // Animate cards in
   requestAnimationFrame(() => {
     const cards = grid.querySelectorAll('.model-card, .interstitial');
+    let maxDelay = 0;
     cards.forEach((card, i) => {
       if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
         const delay = 450 + Math.floor(i / 3) * 200 + (i % 3) * 40;
+        if (delay > maxDelay) maxDelay = delay;
         setTimeout(() => card.classList.add('visible'), delay);
       } else {
         card.classList.add('visible');
       }
     });
+    // Release min-height after cards have animated in
+    setTimeout(() => { grid.style.minHeight = ''; }, maxDelay + 400);
   });
 
   // Observe interstitial
@@ -1726,9 +1809,9 @@ function renderGrid(filteredModels) {
   }
 }
 
-function createModelCard(model, index) {
+function createModelCard(model, index, isFeatured) {
   const card = document.createElement('div');
-  card.className = `model-card anim-card${model.featured ? ' card-featured' : ''}`;
+  card.className = `model-card anim-card${isFeatured ? ' card-featured' : ''}`;
   card.style.setProperty('--card-provider-color', providerColors[model.provider] || '#374151');
   card.setAttribute('tabindex', '0');
   card.setAttribute('role', 'button');
@@ -1752,7 +1835,7 @@ function createModelCard(model, index) {
     <div class="card-model-name">${model.name}</div>
     <div class="card-description">${model.desc}</div>`;
 
-  if (model.featured && model.tags) {
+  if (isFeatured && model.tags) {
     html += `<div class="card-tags-row">`;
     model.tags.forEach(tag => {
       html += `<span class="card-accent-tag">${tag}</span>`;
@@ -1767,7 +1850,7 @@ function createModelCard(model, index) {
     </div>
   `;
 
-  if (model.featured) {
+  if (isFeatured) {
     html += `
     <div class="card-stats-row">
       <div class="card-stat"><div class="card-stat-label">Context window</div><div class="card-stat-value">${model.context}</div></div>
@@ -2082,6 +2165,7 @@ function sortModels(arr) {
 }
 function countActiveAdvancedFilters() {
   let n = 0;
+  if (activeCategory !== null) n++;
   if (activeContextMin !== null) n++;
   if (activeCostMax !== null) n++;
   if (activeTier !== null) n++;
@@ -2092,17 +2176,23 @@ function countActiveAdvancedFilters() {
 function updateFilterBadge() {
   const n = countActiveAdvancedFilters();
   const badge = document.getElementById('filterBadge');
-  const trigger = document.getElementById('filterPanelTrigger');
   const clearBtn = document.getElementById('filterClearBtn');
   if (n > 0) {
     badge.textContent = String(n);
     badge.removeAttribute('hidden');
-    trigger.classList.add('active');
     clearBtn.removeAttribute('hidden');
   } else {
     badge.setAttribute('hidden', '');
-    trigger.classList.remove('active');
     clearBtn.setAttribute('hidden', '');
+  }
+}
+function updateModelCount(count, isFiltered) {
+  const el = document.getElementById('filterModelCount');
+  if (!el) return;
+  if (!isFiltered) {
+    el.textContent = '200+ models';
+  } else {
+    el.textContent = count + ' model' + (count !== 1 ? 's' : '');
   }
 }
 
@@ -2178,6 +2268,8 @@ document.querySelectorAll('.filter-cluster.category md-filter-chip').forEach(chi
         c.selected = c.dataset.filter === activeCategory;
       });
     }
+    // Clear use-case selection when category changes
+    clearUseCaseSelection();
     applyFilters();
   });
 });
@@ -2185,9 +2277,9 @@ document.querySelectorAll('.filter-cluster.category md-filter-chip').forEach(chi
 // Search
 // ─── ADVANCED FILTER PANEL WIRING ───
 const filterPanelTrigger = document.getElementById('filterPanelTrigger');
-const advancedFilterPanel = document.getElementById('advancedFilterPanel');
+const combinedFilterPanel = document.getElementById('combinedFilterPanel');
 filterPanelTrigger.addEventListener('click', () => {
-  const isOpen = advancedFilterPanel.classList.toggle('open');
+  const isOpen = combinedFilterPanel.classList.toggle('open');
   filterPanelTrigger.setAttribute('aria-expanded', String(isOpen));
 });
 document.getElementById('sortSelect').addEventListener('change', (e) => {
@@ -2225,10 +2317,14 @@ document.getElementById('fcChip').addEventListener('click', () => {
   applyFilters();
 });
 document.getElementById('filterClearBtn').addEventListener('click', () => {
+  activeCategory = null;
   activeContextMin = null; activeCostMax = null; activeTier = null; activeFnCalling = false; activeSort = 'default';
   document.getElementById('sortSelect').value = 'default';
   document.querySelectorAll('.ctx-chip, .cost-chip, .tier-chip').forEach(c => { c.selected = false; });
   document.getElementById('fcChip').selected = false;
+  document.getElementById('filterAll').selected = true;
+  document.querySelectorAll('.filter-cluster.category md-filter-chip:not(#filterAll)').forEach(c => { c.selected = false; });
+  clearUseCaseSelection();
   applyFilters();
 });
 
@@ -2279,48 +2375,91 @@ window.addEventListener('scroll', () => {
 
 
 
-// ─── COMPARISON DOTS ───
-const compStrip = document.getElementById('comparisonStrip');
-if (compStrip) {
-  compStrip.addEventListener('scroll', () => {
-    const scrollPos = compStrip.scrollLeft;
-    const cardWidth = compStrip.querySelector('.comparison-card')?.offsetWidth || 300;
-    const idx = Math.round(scrollPos / (cardWidth + 16));
-    document.querySelectorAll('.comparison-dot').forEach((d, i) => {
-      d.classList.toggle('active', i === idx);
-    });
-  });
-  document.querySelectorAll('.comparison-dot').forEach((dot, i) => {
-    dot.addEventListener('click', () => {
-      const cardWidth = compStrip.querySelector('.comparison-card')?.offsetWidth || 300;
-      compStrip.scrollTo({ left: i * (cardWidth + 16), behavior: 'smooth' });
-    });
+// ─── USE CASE CARDS ───
+const useCases = [
+  { label: "Code generation", icon: "code", tint: "#E8F5E9", iconColor: "#2E7D32", models: ["Gemini 2.5 Pro", "Claude 3.7 Sonnet", "Gemma 3 27B", "Mistral Large 2"], category: "Text" },
+  { label: "RAG / retrieval", icon: "search", tint: "#FFF3E0", iconColor: "#E65100", models: ["Command R+", "Command R", "text-embedding-005", "voyage-3", "nomic-embed-text"], category: "Text" },
+  { label: "Customer support", icon: "chat_bubble_outline", tint: "#E3F2FD", iconColor: "#1565C0", models: ["Gemini 2.0 Flash", "Claude 3.5 Haiku", "Command R"], category: "Text" },
+  { label: "Document processing", icon: "description", tint: "#EDE7F6", iconColor: "#4527A0", models: ["Gemini 2.5 Pro", "Claude 3.7 Sonnet", "Jamba 1.5 Large"], category: "Multimodal" },
+  { label: "AI agents", icon: "dashboard", tint: "#FCE4EC", iconColor: "#AD1457", models: ["Gemini 2.5 Pro", "Claude 3.7 Sonnet", "Mistral Large 2", "Command R+"], category: "Multimodal" },
+  { label: "Content generation", icon: "edit_note", tint: "#FCE4EC", iconColor: "#6D4C41", models: ["Gemini 2.5 Pro", "Claude 3.7 Sonnet", "Mistral Large 2", "Gemini 2.0 Flash"], category: "Text" },
+  { label: "Data analysis", icon: "bar_chart", tint: "#F1F8E9", iconColor: "#558B2F", models: ["Gemini 2.5 Pro", "Claude 3.7 Sonnet", "Gemini 2.0 Flash"], category: "Multimodal" },
+  { label: "Image & video", icon: "image", tint: "#EFEBE9", iconColor: "#5D4037", models: ["Imagen 4", "Stable Diffusion 3.5 Large", "Stable Image Ultra", "Veo 2"], category: "Image" },
+];
+
+let activeUseCase = null;
+
+function clearUseCaseSelection() {
+  activeUseCase = null;
+  document.querySelectorAll('.usecase-card').forEach(b => {
+    b.classList.remove('active');
+    b.setAttribute('aria-pressed', 'false');
   });
 }
 
-// ─── COMPARISON SECTION ANIMATION ───
-const compSection = document.getElementById('comparisonSection');
-if (compSection) {
-  const compObs = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        const cards = compSection.querySelectorAll('.comparison-card');
-        cards.forEach((card, i) => {
-          if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
-            card.style.opacity = '0';
-            card.style.transform = 'translateX(24px) scale(0.97)';
-            card.style.transition = `opacity 400ms var(--motion-easing-spring) ${i * 70}ms, transform 400ms var(--motion-easing-spring) ${i * 70}ms`;
-            requestAnimationFrame(() => {
-              card.style.opacity = '1';
-              card.style.transform = 'translateX(0) scale(1)';
-            });
-          }
+const usecaseGrid = document.getElementById('usecaseGrid');
+if (usecaseGrid) {
+  usecaseGrid.className = 'usecase-grid';
+  useCases.forEach((uc, i) => {
+    const card = document.createElement('button');
+    card.className = 'usecase-card' + (i >= 8 ? ' usecase-card-extra' : '');
+    card.setAttribute('aria-pressed', 'false');
+
+    const circle = document.createElement('span');
+    circle.className = 'usecase-icon-circle';
+    circle.style.background = uc.tint;
+
+    const icon = document.createElement('span');
+    icon.className = 'material-symbols-outlined';
+    icon.style.color = uc.iconColor;
+    icon.textContent = uc.icon;
+    circle.appendChild(icon);
+
+    const label = document.createElement('span');
+    label.className = 'usecase-card-label';
+    label.textContent = uc.label;
+
+    card.appendChild(circle);
+    card.appendChild(label);
+
+    card.addEventListener('click', () => {
+      if (activeUseCase === i) {
+        clearUseCaseSelection();
+        activeCategory = null;
+        document.getElementById('filterAll').selected = true;
+        document.querySelectorAll('.filter-cluster.category md-filter-chip:not(#filterAll)').forEach(c => c.selected = false);
+        applyFilters();
+      } else {
+        usecaseGrid.querySelectorAll('.usecase-card').forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-pressed', 'false');
         });
-        compObs.unobserve(e.target);
+        activeUseCase = i;
+        card.classList.add('active');
+        card.setAttribute('aria-pressed', 'true');
+        activeCategory = null;
+        document.getElementById('filterAll').selected = true;
+        document.querySelectorAll('.filter-cluster.category md-filter-chip:not(#filterAll)').forEach(c => c.selected = false);
+        const sf = document.getElementById('searchField');
+        if (sf) sf.value = '';
+        const matchNames = uc.models.map(n => n.toLowerCase());
+        const filtered = models.filter(m => matchNames.includes(m.name.toLowerCase()));
+        const grid = document.getElementById('modelGrid');
+        const existingCards = grid.querySelectorAll('.model-card');
+        if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches && existingCards.length > 0) {
+          existingCards.forEach(c => {
+            c.style.transition = 'opacity 150ms var(--motion-easing-exit), transform 150ms var(--motion-easing-exit)';
+            c.style.opacity = '0';
+            c.style.transform = 'scale(0.95)';
+          });
+          setTimeout(() => renderGrid(filtered), 250);
+        } else {
+          renderGrid(filtered);
+        }
       }
     });
-  }, { threshold: 0.2 });
-  compObs.observe(compSection);
+    usecaseGrid.appendChild(card);
+  });
 }
 
 // ─── PAGE LOAD CHOREOGRAPHY ───
@@ -2330,9 +2469,12 @@ function initPageLoad() {
   if (prefersMotion) {
     setTimeout(() => document.getElementById('topNav').classList.add('visible'), 0);
     setTimeout(() => document.getElementById('mastheadText').classList.add('visible'), 100);
+    document.querySelectorAll('.usecase-card.anim-card').forEach((card, i) => {
+      setTimeout(() => card.classList.add('visible'), 200 + i * 40);
+    });
     setTimeout(() => document.getElementById('filterBar').classList.add('visible'), 350);
   } else {
-    document.querySelectorAll('.anim-fade, .anim-slide-up, .anim-slide-down').forEach(el => {
+    document.querySelectorAll('.anim-fade, .anim-slide-up, .anim-slide-down, .anim-card').forEach(el => {
       el.style.opacity = '1';
       el.style.transform = 'none';
     });
