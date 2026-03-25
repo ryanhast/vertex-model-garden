@@ -1761,9 +1761,6 @@ const providerColors = {
 function renderGrid(filteredModels) {
   const grid = document.getElementById('modelGrid');
   const empty = document.getElementById('emptyState');
-  // Preserve height during re-render to prevent scroll jump
-  const prevHeight = grid.offsetHeight;
-  grid.style.minHeight = prevHeight + 'px';
   grid.innerHTML = '';
 
   const isFiltered = filteredModels.length !== models.length || activeUseCase !== null;
@@ -1777,6 +1774,14 @@ function renderGrid(filteredModels) {
 
   let cardIndex = 0;
   const interstitialInserted = { done: false };
+  let featuredDone = false;
+
+  // Determine which model gets featured treatment:
+  // - For use-case filter: first model in the list
+  // - For default/category view: first model with featured: true
+  const featuredName = activeUseCase !== null
+    ? (useCases[activeUseCase]?.models[0] || '').toLowerCase()
+    : null;
 
   filteredModels.forEach((model, i) => {
     // Insert interstitial after ~7 cards
@@ -1786,7 +1791,17 @@ function renderGrid(filteredModels) {
       interstitialInserted.done = true;
     }
 
-    const card = createModelCard(model, cardIndex, i === 0);
+    let isFeatured = false;
+    if (!featuredDone) {
+      if (featuredName) {
+        isFeatured = model.name.toLowerCase() === featuredName;
+      } else {
+        isFeatured = model.featured === true;
+      }
+      if (isFeatured) featuredDone = true;
+    }
+
+    const card = createModelCard(model, cardIndex, isFeatured);
     grid.appendChild(card);
     cardIndex++;
   });
@@ -1804,8 +1819,7 @@ function renderGrid(filteredModels) {
         card.classList.add('visible');
       }
     });
-    // Release min-height after cards have animated in
-    setTimeout(() => { grid.style.minHeight = ''; }, maxDelay + 400);
+    // (min-height no longer used)
   });
 
   // Observe interstitial
@@ -1826,11 +1840,6 @@ function renderGrid(filteredModels) {
 function createModelCard(model, index, isFeatured) {
   const card = document.createElement('div');
   card.className = `model-card anim-card${isFeatured ? ' card-featured' : ''}`;
-  if (isFeatured) {
-    const shimmer = document.createElement('span');
-    shimmer.className = 'shimmer-ring';
-    card.appendChild(shimmer);
-  }
   card.style.setProperty('--card-provider-color', providerColors[model.provider] || '#374151');
   card.setAttribute('tabindex', '0');
   card.setAttribute('role', 'button');
@@ -1879,6 +1888,11 @@ function createModelCard(model, index, isFeatured) {
   }
 
   card.innerHTML = html;
+  if (isFeatured) {
+    const shimmer = document.createElement('span');
+    shimmer.className = 'shimmer-ring';
+    card.appendChild(shimmer);
+  }
   card.addEventListener('click', () => openDrawer(model));
   card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDrawer(model); } });
   return card;
