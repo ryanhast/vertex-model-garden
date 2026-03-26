@@ -10,6 +10,7 @@ createServer((req, res) => {
   try {
     const file = req.url === '/green' ? 'vertex-model-garden-v2.html'
                : req.url === '/mockups' ? 'usecase-mockups.html'
+               : req.url === '/latest' ? 'vertex-model-latest.html'
                : 'vertex-model-garden-google.html';
     const html = readFileSync(resolve(__dirname, file), 'utf8');
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
