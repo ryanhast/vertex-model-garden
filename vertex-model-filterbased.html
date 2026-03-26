@@ -445,7 +445,7 @@ md-secondary-tab {
   margin-bottom: 16px;
 }
 .filter-arrow {
-  font-size: 10px;
+  font-size: 12px;
   transition: transform 200ms var(--motion-easing-standard);
 }
 .filter-panel-trigger[aria-expanded="true"] .filter-arrow {
@@ -454,14 +454,16 @@ md-secondary-tab {
 
 /* ─── MAIN CONTENT ─── */
 .main-content {
-  padding: 24px;
-  overflow: hidden;
+  flex: 1;
+  min-width: 0;
+  padding: 16px 8px 24px;
+  overflow: visible;
 }
 
 /* ─── MODEL GRID ─── */
 .model-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
   grid-auto-flow: dense;
 }
@@ -920,10 +922,34 @@ md-secondary-tab {
 }
 .filter-modality-row::-webkit-scrollbar { display: none; }
 /* Dashboard grid */
-.filter-dashboard {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+/* ─── Sidebar + Content layout ─── */
+.page-layout {
+  display: flex;
+  gap: 24px;
+  padding: 0 24px;
+}
+.filter-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  padding: 16px 0 24px;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
+}
+.filter-sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sidebar-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.stacked-divider {
+  height: 1px;
+  background: var(--md-sys-color-outline-variant);
+  margin: 4px 0;
 }
 .filter-dash-card {
   background: var(--md-sys-color-surface-container-low);
@@ -991,7 +1017,7 @@ md-secondary-tab {
   display: flex;
   justify-content: space-between;
   font-family: var(--md-ref-typeface-plain);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--md-sys-color-on-surface-variant);
 }
 /* Segmented control inside cards */
@@ -1125,21 +1151,42 @@ md-secondary-tab {
 }
 .filter-toggle-label {
   font-family: var(--md-ref-typeface-plain);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 400;
   color: var(--md-sys-color-on-surface);
 }
-/* Bottom row */
-.filter-hero-bottom {
+/* Capabilities list inside card */
+.capabilities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.capabilities-list md-filter-chip {
+  --md-filter-chip-container-height: 32px;
+}
+/* Sort + reset row between dashboard and grid */
+.filter-controls-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 8px 0 0;
 }
-@media (max-width: 1100px) {
-  .filter-dashboard { grid-template-columns: 1fr 1fr; }
+@media (min-width: 1400px) {
+  .model-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 840px) {
+  .page-layout { flex-direction: column; }
+  .filter-sidebar {
+    width: 100%;
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+  }
+  .model-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 600px) {
-  .filter-dashboard { grid-template-columns: 1fr; }
+  .model-grid { grid-template-columns: 1fr; }
 }
 
 /* ─── USE CASE GRID (unused in filter version) ─── */
@@ -1226,7 +1273,7 @@ md-secondary-tab {
   outline-offset: 2px;
 }
 .usecase-expand-arrow {
-  font-size: 10px;
+  font-size: 12px;
   transition: transform 200ms var(--motion-easing-standard);
 }
 .usecase-expand-btn[aria-expanded="true"] .usecase-expand-arrow {
@@ -1383,7 +1430,7 @@ md-secondary-tab {
   padding: 12px;
 }
 .drawer-stat-cell .label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--md-sys-color-on-surface-variant);
 }
@@ -1456,7 +1503,7 @@ md-secondary-tab {
   border-radius: var(--md-sys-shape-corner-small);
   padding: 16px;
   font-family: var(--md-ref-typeface-mono);
-  font-size: 13px;
+  font-size: 12px;
   color: var(--md-sys-color-on-surface);
   white-space: pre;
   overflow-x: auto;
@@ -1469,7 +1516,7 @@ md-secondary-tab {
 .drawer-spec-table td {
   padding: 8px 0;
   border-bottom: 1px solid var(--md-sys-color-outline-variant);
-  font-size: 13px;
+  font-size: 12px;
   vertical-align: top;
 }
 .drawer-spec-table td:first-child {
@@ -1545,7 +1592,7 @@ md-secondary-tab {
   border-radius: 50%;
   background: var(--md-sys-color-primary);
   color: var(--md-sys-color-on-primary);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 500;
   line-height: 1;
 }
@@ -1601,7 +1648,7 @@ md-secondary-tab {
 .filter-group { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
 .filter-group-label {
   font-family: var(--md-ref-typeface-plain);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--md-sys-color-on-surface-variant);
   letter-spacing: 0.3px;
@@ -1714,7 +1761,7 @@ md-secondary-tab {
 .temp-slider:focus-visible { outline: 3px solid var(--md-sys-color-primary); outline-offset: 4px; }
 .temp-value {
   font-family: var(--md-ref-typeface-mono);
-  font-size: 13px;
+  font-size: 12px;
   color: var(--md-sys-color-on-surface);
   min-width: 28px;
   text-align: right;
@@ -1735,7 +1782,7 @@ md-secondary-tab {
 }
 .sys-prompt-toggle:hover { color: var(--md-sys-color-on-surface); }
 .sys-prompt-toggle:focus-visible { outline: 3px solid var(--md-sys-color-primary); outline-offset: 2px; border-radius: 4px; }
-.sys-prompt-caret { display: inline-block; font-size: 9px; transition: transform var(--motion-duration-short4) var(--motion-easing-standard); }
+.sys-prompt-caret { display: inline-block; font-size: 12px; transition: transform var(--motion-duration-short4) var(--motion-easing-standard); }
 .sys-prompt-caret.open { transform: rotate(90deg); }
 .sys-prompt-body { display: none; margin-top: 4px; }
 .sys-prompt-body.open { display: block; }
@@ -1767,31 +1814,31 @@ md-secondary-tab {
     <p class="masthead-sub">Explore and deploy 200+ foundation models from Google, Anthropic, Meta, and more.</p>
   </div>
 </header>
-<!-- ═══ FILTER HERO: SLIDER DASHBOARD ═══ -->
-<section class="filter-hero" id="filterHero">
-  <!-- Search -->
-  <div class="filter-hero-search">
-    <span class="filter-bar-search-icon material-symbols-outlined" aria-hidden="true">search</span>
-    <input class="filter-hero-search-input" id="searchField" type="text" placeholder="Search 200+ models by name, provider, or capability" aria-label="Search models">
-  </div>
+<!-- ═══ SIDEBAR + CONTENT LAYOUT ═══ -->
+<div class="page-layout">
+  <!-- Left: Filter sidebar -->
+  <aside class="filter-sidebar" id="filterHero">
+    <!-- Hidden search to keep JS reference -->
+    <input id="searchField" type="hidden">
 
-  <!-- Modality chips -->
-  <div class="filter-modality-row">
-    <div class="filter-cluster category" role="group" aria-label="Category filters">
-      <md-filter-chip label="All" id="filterAll" selected aria-pressed="true"></md-filter-chip>
-      <md-filter-chip label="Text + code" data-filter="Text" aria-pressed="false"></md-filter-chip>
-      <md-filter-chip label="Image" data-filter="Image" aria-pressed="false"></md-filter-chip>
-      <md-filter-chip label="Video" data-filter="Video" aria-pressed="false"></md-filter-chip>
-      <md-filter-chip label="Audio" data-filter="Audio" aria-pressed="false"></md-filter-chip>
-      <md-filter-chip label="Multimodal" data-filter="Multimodal" aria-pressed="false"></md-filter-chip>
-      <md-filter-chip label="Embeddings" data-filter="Embeddings" aria-pressed="false"></md-filter-chip>
+    <!-- Modality chips -->
+    <div class="filter-sidebar-section">
+      <div class="filter-dash-title">Modality</div>
+      <div class="filter-cluster category sidebar-chips" role="group" aria-label="Category filters">
+        <md-filter-chip label="All" id="filterAll" selected aria-pressed="true"></md-filter-chip>
+        <md-filter-chip label="Text + code" data-filter="Text" aria-pressed="false"></md-filter-chip>
+        <md-filter-chip label="Image" data-filter="Image" aria-pressed="false"></md-filter-chip>
+        <md-filter-chip label="Video" data-filter="Video" aria-pressed="false"></md-filter-chip>
+        <md-filter-chip label="Audio" data-filter="Audio" aria-pressed="false"></md-filter-chip>
+        <md-filter-chip label="Multimodal" data-filter="Multimodal" aria-pressed="false"></md-filter-chip>
+        <md-filter-chip label="Embeddings" data-filter="Embeddings" aria-pressed="false"></md-filter-chip>
+      </div>
     </div>
-  </div>
 
-  <!-- Dashboard cards — Row 1 -->
-  <div class="filter-dashboard">
+    <div class="stacked-divider"></div>
+
     <!-- Parameter size -->
-    <div class="filter-dash-card">
+    <div class="filter-sidebar-section">
       <div class="filter-dash-header">
         <span class="filter-dash-title">Parameter size</span>
         <span class="filter-dash-value" id="paramValue">Any</span>
@@ -1803,8 +1850,10 @@ md-secondary-tab {
       </div>
     </div>
 
-    <!-- Context window dual-range -->
-    <div class="filter-dash-card">
+    <div class="stacked-divider"></div>
+
+    <!-- Context window -->
+    <div class="filter-sidebar-section">
       <div class="filter-dash-header">
         <span class="filter-dash-title">Context window</span>
         <span class="filter-dash-value" id="contextValue">Any</span>
@@ -1823,8 +1872,10 @@ md-secondary-tab {
       </div>
     </div>
 
-    <!-- Input cost per 1M tokens -->
-    <div class="filter-dash-card">
+    <div class="stacked-divider"></div>
+
+    <!-- Input cost -->
+    <div class="filter-sidebar-section">
       <div class="filter-dash-header">
         <span class="filter-dash-title">Input cost / 1M tokens</span>
         <span class="filter-dash-value" id="costValue">Any</span>
@@ -1842,33 +1893,45 @@ md-secondary-tab {
       </div>
     </div>
 
+    <div class="stacked-divider"></div>
+
     <!-- Provider -->
-    <div class="filter-dash-card">
+    <div class="filter-sidebar-section">
       <div class="filter-dash-header">
         <span class="filter-dash-title">Provider</span>
         <span class="filter-dash-value" id="providerValue">All</span>
       </div>
       <div class="provider-chip-grid" id="providerChips"></div>
     </div>
-  </div>
 
-  <!-- Bottom: toggles + sort + clear -->
-  <div class="filter-hero-bottom">
-    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-      <md-filter-chip label="Open weights" id="openWeightsChip" aria-pressed="false"></md-filter-chip>
-      <md-filter-chip label="Supports fine-tuning" id="fineTuneChip" aria-pressed="false"></md-filter-chip>
-      <md-filter-chip label="Function calling" id="fcChip" aria-pressed="false"></md-filter-chip>
-      <md-filter-chip label="Self-hostable" id="deployableChip" aria-pressed="false"></md-filter-chip>
-      <select class="filter-sort-select" id="sortSelect" aria-label="Sort models by">
-        <option value="default">Default order</option>
-        <option value="context-desc">Context window ↓</option>
-        <option value="cost-asc">Input cost ↑</option>
-        <option value="name-asc">Name A–Z</option>
-      </select>
+    <div class="stacked-divider"></div>
+
+    <!-- Capabilities -->
+    <div class="filter-sidebar-section">
+      <div class="filter-dash-title">Capabilities</div>
+      <div class="capabilities-list">
+        <md-filter-chip label="Open weights" id="openWeightsChip" aria-pressed="false"></md-filter-chip>
+        <md-filter-chip label="Fine-tuning" id="fineTuneChip" aria-pressed="false"></md-filter-chip>
+        <md-filter-chip label="Function calling" id="fcChip" aria-pressed="false"></md-filter-chip>
+        <md-filter-chip label="Self-hostable" id="deployableChip" aria-pressed="false"></md-filter-chip>
+      </div>
     </div>
-    <button class="filter-clear-btn" id="filterClearBtn" hidden aria-label="Clear all filters">Reset all</button>
-  </div>
-</section>
+
+    <button class="filter-clear-btn" id="filterClearBtn" hidden aria-label="Clear all filters" style="margin-top:8px;">Reset all</button>
+
+    <!-- Hidden sort select to keep JS reference intact -->
+    <select id="sortSelect" style="display:none;" aria-hidden="true">
+      <option value="default">Default order</option>
+    </select>
+  </aside>
+
+  <!-- Right: Model grid -->
+  <main class="main-content">
+    <div class="model-count-row" id="filterModelCount"></div>
+    <div class="model-grid" id="modelGrid"></div>
+    <div class="empty-state" id="emptyState"><p>No models match — try a different search</p></div>
+  </main>
+</div>
 
 <!-- Hidden elements to keep JS references intact -->
 <div class="filter-bar" id="filterBar" style="display:none;"></div>
@@ -1876,12 +1939,6 @@ md-secondary-tab {
 <button id="filterPanelTrigger" style="display:none;"></button>
 <span id="filterArrow" style="display:none;"></span>
 <span id="filterBadge" style="display:none;"></span>
-
-<!-- ═══ MAIN CONTENT ═══ -->
-<main class="main-content">
-  <div class="model-count-row" id="filterModelCount"></div>
-  <div class="model-grid" id="modelGrid"></div>
-  <div class="empty-state" id="emptyState"><p>No models match — try a different search</p></div>
 
   <!-- ═══ FINAL CTA ═══ -->
   <section class="final-cta">
@@ -1956,9 +2013,9 @@ md-secondary-tab {
           <div class="playground-section">
             <div class="playground-label">Temperature</div>
             <div class="playground-row" style="gap: 8px;">
-              <span style="font-size:11px;font-weight:500;color:var(--md-sys-color-on-surface-variant);min-width:24px;">0.0</span>
+              <span style="font-size:12px;font-weight:500;color:var(--md-sys-color-on-surface-variant);min-width:24px;">0.0</span>
               <input class="temp-slider" id="tempSlider" type="range" min="0" max="2" step="0.1" value="0.7" aria-label="Temperature" aria-valuemin="0" aria-valuemax="2">
-              <span style="font-size:11px;font-weight:500;color:var(--md-sys-color-on-surface-variant);min-width:24px;text-align:right;">2.0</span>
+              <span style="font-size:12px;font-weight:500;color:var(--md-sys-color-on-surface-variant);min-width:24px;text-align:right;">2.0</span>
               <span class="temp-value" id="tempValue" aria-live="polite">0.7</span>
             </div>
           </div>
