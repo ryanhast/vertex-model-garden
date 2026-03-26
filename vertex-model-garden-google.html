@@ -463,6 +463,7 @@ md-secondary-tab {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
+  grid-auto-flow: dense;
 }
 @media (min-width: 1600px) {
   .model-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -784,10 +785,10 @@ md-secondary-tab {
 
 /* ─── INTERSTITIAL ─── */
 .interstitial {
+  grid-column: 1 / -1;
   background: var(--md-sys-color-primary-container);
   border-radius: var(--md-sys-shape-corner-extra-large);
   padding: 32px 24px;
-  margin: 24px 0;
   display: flex;
   align-items: center;
   gap: 32px;
@@ -1835,6 +1836,26 @@ function renderGrid(filteredModels) {
     }, { threshold: 0.2 });
     obs.observe(interstitial);
   }
+
+  // Fill trailing grid gap with empty spacers
+  requestAnimationFrame(() => {
+    const cols = getComputedStyle(grid).gridTemplateColumns.split(' ').length;
+    const items = grid.querySelectorAll(':scope > .model-card');
+    if (items.length === 0) return;
+    const lastItem = items[items.length - 1];
+    const lastCol = Math.round((lastItem.offsetLeft - grid.offsetLeft) / (grid.offsetWidth / cols)) + 1;
+    const spanSize = lastItem.classList.contains('card-featured') ? 2 : 1;
+    const gap = cols - (lastCol + spanSize - 1);
+    for (let i = 0; i < gap; i++) {
+      const spacer = document.createElement('div');
+      spacer.className = 'model-card';
+      spacer.style.visibility = 'hidden';
+      spacer.style.pointerEvents = 'none';
+      spacer.style.boxShadow = 'none';
+      spacer.style.minHeight = '0';
+      grid.appendChild(spacer);
+    }
+  });
 }
 
 function createModelCard(model, index, isFeatured) {
