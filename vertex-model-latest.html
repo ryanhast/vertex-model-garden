@@ -884,14 +884,29 @@ md-secondary-tab {
   display: flex;
   align-items: baseline;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: -12px;
+  position: relative;
+  z-index: 3;
 }
 .latest-title {
-  font-family: var(--md-ref-typeface-plain);
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--md-sys-color-on-surface);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--md-ref-typeface-brand);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--md-sys-color-on-primary);
+  background: var(--md-sys-color-primary);
+  padding: 10px 20px 10px 16px;
+  border-radius: var(--md-sys-shape-corner-full);
   margin: 0;
+  letter-spacing: 0.2px;
+  box-shadow: 0 2px 6px rgba(26, 115, 232, 0.3);
+  transform: rotate(-1.5deg);
+}
+.latest-title::before {
+  content: '✦';
+  font-size: 12px;
 }
 .latest-subtitle {
   font-family: var(--md-ref-typeface-plain);
@@ -943,6 +958,80 @@ md-secondary-tab {
   outline: 3px solid var(--md-sys-color-primary);
   outline-offset: 2px;
 }
+/* Featured latest card — double width, glow + shimmer */
+.latest-card-featured {
+  grid-column: span 2;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+  box-shadow: none;
+}
+.latest-card-featured .latest-card-name {
+  font-family: var(--md-ref-typeface-brand);
+  font-size: 22px;
+}
+.latest-card-featured::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--md-sys-color-surface-container-low);
+  z-index: -1;
+}
+.latest-card-featured::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: calc(var(--md-sys-shape-corner-large) + 4px);
+  z-index: -2;
+  background: conic-gradient(
+    from var(--glow-angle),
+    transparent 0%,
+    #4285F4 8%,
+    transparent 18%,
+    transparent 32%,
+    #34A853 38%,
+    transparent 48%,
+    transparent 58%,
+    #FBBC05 63%,
+    transparent 70%,
+    transparent 78%,
+    #EA4335 83%,
+    transparent 93%
+  );
+  filter: blur(4px);
+  animation: glow-orbit 8s linear infinite,
+             glow-breathe 7s ease-in-out infinite;
+}
+.latest-card-featured .shimmer-ring {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--shimmer-angle),
+    transparent 0%,
+    rgba(255,255,255,0.85) 8%,
+    rgba(210,215,225,0.6) 14%,
+    transparent 22%,
+    transparent 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  animation: shimmer-spin 6s linear infinite,
+             shimmer-breathe 5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 2;
+}
+@media (prefers-reduced-motion: reduce) {
+  .latest-card-featured::before { animation: none; opacity: 0; }
+}
+@media (max-width: 600px) {
+  .latest-card-featured { grid-column: span 1; }
+}
 /* Card top: provider + recency */
 .latest-card-top {
   display: flex;
@@ -987,17 +1076,14 @@ md-secondary-tab {
 }
 /* What's new tag */
 .latest-whats-new {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
   font-family: var(--md-ref-typeface-plain);
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 400;
   color: var(--md-sys-color-primary);
-  background: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
-  padding: 4px 10px;
-  border-radius: var(--md-sys-shape-corner-full);
-  width: fit-content;
+  line-height: 1.4;
+}
+.latest-whats-new-label {
+  font-weight: 500;
 }
 /* Benchmark delta */
 .latest-benchmark {
@@ -1574,7 +1660,6 @@ md-secondary-tab {
 <section class="latest-section" id="latestSection">
   <div class="latest-header">
     <h2 class="latest-title">Latest releases</h2>
-    <span class="latest-subtitle">Newest models and updates across the garden</span>
   </div>
   <div class="latest-grid" id="latestGrid"></div>
 </section>
@@ -1838,7 +1923,7 @@ function renderGrid(filteredModels) {
   const empty = document.getElementById('emptyState');
   grid.innerHTML = '';
 
-  const isFiltered = filteredModels.length !== models.length || activeUseCase !== null;
+  const isFiltered = filteredModels.length !== models.length;
   if (filteredModels.length === 0) {
     empty.classList.add('visible');
     updateModelCount(0, true);
@@ -1854,9 +1939,7 @@ function renderGrid(filteredModels) {
   // Determine which model gets featured treatment:
   // - For use-case filter: first model in the list
   // - For default/category view: first model with featured: true
-  const featuredName = activeUseCase !== null
-    ? (useCases[activeUseCase]?.models[0] || '').toLowerCase()
-    : null;
+  const featuredName = null;
 
   filteredModels.forEach((model, i) => {
     // Insert interstitial after ~7 cards
@@ -2559,10 +2642,16 @@ const latestGrid = document.getElementById('latestGrid');
 if (latestGrid) {
   latestModels.forEach((lm, i) => {
     const card = document.createElement('div');
-    card.className = 'latest-card anim-card';
+    const isFeaturedLatest = i === 0;
+    card.className = 'latest-card anim-card' + (isFeaturedLatest ? ' latest-card-featured' : '');
     card.setAttribute('tabindex', '0');
     card.setAttribute('role', 'button');
     card.setAttribute('aria-label', `${lm.name} — ${lm.whatsNew}`);
+    if (isFeaturedLatest) {
+      const shimmer = document.createElement('span');
+      shimmer.className = 'shimmer-ring';
+      card.appendChild(shimmer);
+    }
 
     const provColor = providerColors[lm.provider] || '#374151';
 
@@ -2574,9 +2663,8 @@ if (latestGrid) {
         </div>
         <span class="latest-recency">${lm.recency}</span>
       </div>
-      <div class="latest-card-name">${lm.name} <span class="latest-card-version">(${lm.version})</span></div>
-      <div class="latest-whats-new"><span class="material-symbols-outlined" style="font-size:14px">new_releases</span> ${lm.whatsNew}</div>
-      <div class="latest-benchmark"><span class="latest-benchmark-value">${lm.benchmark}</span></div>
+      <div class="latest-card-name">${lm.name}</div>
+      <div class="latest-whats-new">✓ ${lm.whatsNew}</div>
       <div class="latest-cost-row">
         <div class="latest-cost-item"><div class="latest-cost-label">Input</div><div class="latest-cost-value">${lm.inputCost}</div></div>
         <div class="latest-cost-item"><div class="latest-cost-label">Output</div><div class="latest-cost-value">${lm.outputCost}</div></div>
