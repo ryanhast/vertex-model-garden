@@ -375,7 +375,7 @@ md-secondary-tab {
 }
 .masthead-sub {
   font-family: var(--md-ref-typeface-plain);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 400;
   color: var(--md-sys-color-on-surface-variant);
   margin-top: 8px;
@@ -428,7 +428,7 @@ md-secondary-tab {
   outline: none;
   background: none;
   font-family: var(--md-ref-typeface-plain);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 400;
   color: var(--md-sys-color-on-surface);
   width: 100%;
@@ -439,7 +439,7 @@ md-secondary-tab {
 }
 .model-count-row {
   font-family: var(--md-ref-typeface-plain);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--md-sys-color-on-surface-variant);
   margin-bottom: 16px;
@@ -633,7 +633,7 @@ md-secondary-tab {
 }
 .card-featured .card-model-name {
   font-family: var(--md-ref-typeface-brand);
-  font-size: 20px;
+  font-size: 16px;
 }
 .card-featured .card-stats-row {
   border-top-color: var(--md-sys-color-outline-variant);
@@ -669,7 +669,7 @@ md-secondary-tab {
 }
 .card-accent-tag {
   font-family: var(--md-ref-typeface-plain);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--md-sys-color-on-primary-container);
   background: rgba(255,255,255,0.5);
@@ -703,7 +703,7 @@ md-secondary-tab {
 }
 .capability-chip {
   font-family: var(--md-ref-typeface-plain);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   padding: 3px 10px;
   border-radius: var(--md-sys-shape-corner-full);
@@ -743,7 +743,7 @@ md-secondary-tab {
 }
 .performance-pill {
   font-family: var(--md-ref-typeface-plain);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   padding: 3px 10px;
   border-radius: var(--md-sys-shape-corner-full);
@@ -773,7 +773,7 @@ md-secondary-tab {
   flex: 1;
 }
 .card-stat-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--md-sys-color-on-surface-variant);
 }
@@ -818,14 +818,14 @@ md-secondary-tab {
 .interstitial-left { flex: 1; }
 .interstitial-eyebrow {
   font-family: var(--md-ref-typeface-plain);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--md-sys-color-on-primary-container);
   opacity: 0.6;
 }
 .interstitial-heading {
   font-family: var(--md-ref-typeface-brand);
-  font-size: 28px;
+  font-size: 36px;
   font-weight: 400;
   color: var(--md-sys-color-on-primary-container);
   line-height: 1.2;
@@ -833,7 +833,7 @@ md-secondary-tab {
 }
 .interstitial-body {
   font-family: var(--md-ref-typeface-plain);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 400;
   color: var(--md-sys-color-on-primary-container);
   opacity: 0.7;
@@ -846,7 +846,7 @@ md-secondary-tab {
 }
 .code-block {
   font-family: var(--md-ref-typeface-mono);
-  font-size: 13px;
+  font-size: 12px;
   background: rgba(255,255,255,0.35);
   border-radius: 12px;
   padding: 16px;
@@ -865,7 +865,7 @@ md-secondary-tab {
   padding: 4px 8px;
   cursor: pointer;
   font-family: var(--md-ref-typeface-plain);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--md-sys-color-on-primary-container);
   display: flex;
@@ -883,24 +883,28 @@ md-secondary-tab {
 }
 .usecase-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
 }
 .usecase-card {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 24px 16px 20px;
-  background: var(--md-sys-color-surface);
-  border: 1px solid var(--md-sys-color-outline-variant);
+  align-items: flex-start;
+  gap: 8px;
+  padding: 16px;
+  min-height: 120px;
+  justify-content: flex-end;
+  background: var(--md-sys-color-surface-container-low);
+  border: none;
   border-radius: var(--md-sys-shape-corner-large);
   cursor: pointer;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 1px rgba(0,0,0,0.15);
   transition: background 200ms var(--motion-easing-standard),
-              border-color 200ms var(--motion-easing-standard);
+              box-shadow 200ms var(--motion-easing-standard);
 }
 .usecase-card:hover {
-  background: var(--md-sys-color-surface-container-low);
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-low) 70%, white);
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.30), 0 4px 8px 3px rgba(0,0,0,0.15);
 }
 .usecase-card:focus-visible {
   outline: 3px solid var(--md-sys-color-primary);
@@ -908,29 +912,21 @@ md-secondary-tab {
 }
 .usecase-card.active {
   background: var(--md-sys-color-primary-container);
-  border-color: var(--md-sys-color-primary);
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.15), 0 2px 6px 2px rgba(0,0,0,0.10);
 }
-.usecase-icon-circle {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.usecase-icon-circle .material-symbols-outlined {
-  font-size: 24px;
+.usecase-icon {
+  font-size: 20px;
+  line-height: 1;
 }
 .usecase-card-label {
   font-family: var(--md-ref-typeface-plain);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--md-sys-color-on-surface);
-  text-align: center;
   line-height: 1.3;
 }
 .usecase-card.active .usecase-card-label {
-  color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary-container);
 }
 /* Expand/collapse */
 .usecase-card-extra { display: none; }
@@ -966,12 +962,12 @@ md-secondary-tab {
   transform: rotate(180deg);
 }
 @media (max-width: 840px) {
-  .usecase-grid { grid-template-columns: repeat(3, 1fr); }
+  .usecase-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 600px) {
-  .usecase-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-  .usecase-card { padding: 20px 12px 16px; }
-  .usecase-card-label { font-size: 13px; }
+  .usecase-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .usecase-card { padding: 10px 12px; }
+  .usecase-card-label { font-size: 16px; }
 }
 
 /* ─── FINAL CTA ─── */
@@ -984,7 +980,7 @@ md-secondary-tab {
 }
 .final-cta-heading {
   font-family: var(--md-ref-typeface-brand);
-  font-size: 24px;
+  font-size: 36px;
   font-weight: 400;
   color: var(--md-sys-color-on-primary-container);
 }
@@ -1009,7 +1005,7 @@ md-secondary-tab {
 }
 .final-cta-sub {
   font-family: var(--md-ref-typeface-plain);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--md-sys-color-on-primary-container);
   opacity: 0.5;
@@ -2439,6 +2435,7 @@ const useCases = [
   { label: "Content generation", icon: "edit_note", tint: "#FCE4EC", iconColor: "#6D4C41", models: ["Gemini 2.5 Pro", "Claude 3.7 Sonnet", "Mistral Large 2", "Gemini 2.0 Flash"], category: "Text" },
   { label: "Data analysis", icon: "bar_chart", tint: "#F1F8E9", iconColor: "#558B2F", models: ["Gemini 2.5 Pro", "Claude 3.7 Sonnet", "Gemini 2.0 Flash"], category: "Multimodal" },
   { label: "Image & video", icon: "image", tint: "#EFEBE9", iconColor: "#5D4037", models: ["Imagen 4", "Stable Diffusion 3.5 Large", "Stable Image Ultra", "Veo 2"], category: "Image" },
+  { label: "Fine-tuning", icon: "tune", tint: "#E0F2F1", iconColor: "#00695C", models: ["Gemma 3 27B", "Gemma 3 9B", "Llama 3.3 70B", "Mistral Nemo", "Llama 3.2 Vision 11B"], category: "Text" },
 ];
 
 let activeUseCase = null;
@@ -2456,24 +2453,19 @@ if (usecaseGrid) {
   usecaseGrid.className = 'usecase-grid';
   useCases.forEach((uc, i) => {
     const card = document.createElement('button');
-    card.className = 'usecase-card' + (i >= 8 ? ' usecase-card-extra' : '');
+    card.className = 'usecase-card' + (i >= 9 ? ' usecase-card-extra' : '');
     card.setAttribute('aria-pressed', 'false');
 
-    const circle = document.createElement('span');
-    circle.className = 'usecase-icon-circle';
-    circle.style.background = uc.tint;
-
     const icon = document.createElement('span');
-    icon.className = 'material-symbols-outlined';
+    icon.className = 'material-symbols-outlined usecase-icon';
     icon.style.color = uc.iconColor;
     icon.textContent = uc.icon;
-    circle.appendChild(icon);
 
     const label = document.createElement('span');
     label.className = 'usecase-card-label';
     label.textContent = uc.label;
 
-    card.appendChild(circle);
+    card.appendChild(icon);
     card.appendChild(label);
 
     card.addEventListener('click', () => {
