@@ -890,10 +890,9 @@ md-secondary-tab {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 8px;
-  padding: 16px;
+  padding: 20px;
   min-height: 120px;
-  justify-content: flex-end;
+  justify-content: space-between;
   background: var(--md-sys-color-surface-container-low);
   border: none;
   border-radius: var(--md-sys-shape-corner-large);
@@ -915,8 +914,15 @@ md-secondary-tab {
   box-shadow: 0 1px 2px 0 rgba(0,0,0,0.15), 0 2px 6px 2px rgba(0,0,0,0.10);
 }
 .usecase-icon {
-  font-size: 20px;
+  font-size: 48px;
   line-height: 1;
+  opacity: 0.7;
+}
+.usecase-card:hover .usecase-icon {
+  opacity: 1;
+}
+.usecase-card.active .usecase-icon {
+  opacity: 1;
 }
 .usecase-card-label {
   font-family: var(--md-ref-typeface-plain);
@@ -2427,15 +2433,15 @@ window.addEventListener('scroll', () => {
 
 // ─── USE CASE CARDS ───
 const useCases = [
-  { label: "Code generation", icon: "code", tint: "#E8F5E9", iconColor: "#2E7D32", models: ["Gemini 2.5 Pro", "Claude 3.7 Sonnet", "Gemma 3 27B", "Mistral Large 2"], category: "Text" },
-  { label: "RAG / retrieval", icon: "search", tint: "#FFF3E0", iconColor: "#E65100", models: ["Command R+", "Command R", "text-embedding-005", "voyage-3", "nomic-embed-text"], category: "Text" },
-  { label: "Customer support", icon: "chat_bubble_outline", tint: "#E3F2FD", iconColor: "#1565C0", models: ["Gemini 2.0 Flash", "Claude 3.5 Haiku", "Command R"], category: "Text" },
-  { label: "Document processing", icon: "description", tint: "#EDE7F6", iconColor: "#4527A0", models: ["Gemini 2.5 Pro", "Claude 3.7 Sonnet", "Jamba 1.5 Large"], category: "Multimodal" },
-  { label: "AI agents", icon: "dashboard", tint: "#FCE4EC", iconColor: "#AD1457", models: ["Gemini 2.5 Pro", "Claude 3.7 Sonnet", "Mistral Large 2", "Command R+"], category: "Multimodal" },
-  { label: "Content generation", icon: "edit_note", tint: "#FCE4EC", iconColor: "#6D4C41", models: ["Gemini 2.5 Pro", "Claude 3.7 Sonnet", "Mistral Large 2", "Gemini 2.0 Flash"], category: "Text" },
-  { label: "Data analysis", icon: "bar_chart", tint: "#F1F8E9", iconColor: "#558B2F", models: ["Gemini 2.5 Pro", "Claude 3.7 Sonnet", "Gemini 2.0 Flash"], category: "Multimodal" },
-  { label: "Image & video", icon: "image", tint: "#EFEBE9", iconColor: "#5D4037", models: ["Imagen 4", "Stable Diffusion 3.5 Large", "Stable Image Ultra", "Veo 2"], category: "Image" },
-  { label: "Fine-tuning", icon: "tune", tint: "#E0F2F1", iconColor: "#00695C", models: ["Gemma 3 27B", "Gemma 3 9B", "Llama 3.3 70B", "Mistral Nemo", "Llama 3.2 Vision 11B"], category: "Text" },
+  { label: "Code generation", icon: "code", iconColor: "#4285F4", models: ["Gemini 2.5 Pro", "Claude 3.7 Sonnet", "Gemma 3 27B", "Mistral Large 2"], category: "Text" },
+  { label: "RAG / retrieval", icon: "search", iconColor: "#FBBC05", models: ["Command R+", "Command R", "text-embedding-005", "voyage-3", "nomic-embed-text"], category: "Text" },
+  { label: "Customer support", icon: "chat_bubble_outline", iconColor: "#EA4335", models: ["Gemini 2.0 Flash", "Claude 3.5 Haiku", "Command R"], category: "Text" },
+  { label: "Document processing", icon: "description", iconColor: "#34A853", models: ["Gemini 2.5 Pro", "Claude 3.7 Sonnet", "Jamba 1.5 Large"], category: "Multimodal" },
+  { label: "AI agents", icon: "dashboard", iconColor: "#EA4335", models: ["Gemini 2.5 Pro", "Claude 3.7 Sonnet", "Mistral Large 2", "Command R+"], category: "Multimodal" },
+  { label: "Content generation", icon: "edit_note", iconColor: "#4285F4", models: ["Gemini 2.5 Pro", "Claude 3.7 Sonnet", "Mistral Large 2", "Gemini 2.0 Flash"], category: "Text" },
+  { label: "Data analysis", icon: "bar_chart", iconColor: "#EA4335", models: ["Gemini 2.5 Pro", "Claude 3.7 Sonnet", "Gemini 2.0 Flash"], category: "Multimodal" },
+  { label: "Image & video", icon: "image", iconColor: "#34A853", models: ["Imagen 4", "Stable Diffusion 3.5 Large", "Stable Image Ultra", "Veo 2"], category: "Image" },
+  { label: "Fine-tuning", icon: "tune", iconColor: "#FBBC05", models: ["Gemma 3 27B", "Gemma 3 9B", "Llama 3.3 70B", "Mistral Nemo", "Llama 3.2 Vision 11B"], category: "Text" },
 ];
 
 let activeUseCase = null;
@@ -2455,6 +2461,8 @@ if (usecaseGrid) {
     const card = document.createElement('button');
     card.className = 'usecase-card' + (i >= 9 ? ' usecase-card-extra' : '');
     card.setAttribute('aria-pressed', 'false');
+
+    card.style.background = `color-mix(in srgb, ${uc.iconColor} 8%, var(--md-sys-color-surface-container-low))`;
 
     const icon = document.createElement('span');
     icon.className = 'material-symbols-outlined usecase-icon';
