@@ -1,0 +1,27 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# macOS Finder duplicates
+* 2.*
+* 2
+
+# Node
+node_modules/
+
+# Build output
+.vite/
+dist/
+build/
+
+# Env files
+.env
+.env.*
+
+# Editor/tooling
+.claude/
+.vscode/
+.idea/
+
+# Logs
+*.log

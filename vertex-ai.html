@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vertex AI — What are you trying to build?</title>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "@material/web/": "https://esm.run/@material/web/"
+    }
+  }
+  </script>
+  <script type="module">
+    import '@material/web/all.js';
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&family=Google+Sans+Text:wght@400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Mono:wght@400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+
+    /* ── Root tokens ── */
+    :root {
+      --md-ref-typeface-brand: 'Fraunces', serif;
+      --md-ref-typeface-plain: 'Google Sans Text', sans-serif;
+      --md-ref-typeface-mono: 'Google Sans Mono', monospace;
+
+      --md-sys-shape-corner-none: 0px;
+      --md-sys-shape-corner-extra-small: 4px;
+      --md-sys-shape-corner-small: 8px;
+      --md-sys-shape-corner-medium: 12px;
+      --md-sys-shape-corner-large: 16px;
+      --md-sys-shape-corner-extra-large: 28px;
+      --md-sys-shape-corner-full: 9999px;
+
+      --md-sys-color-primary: #1A73E8;
+      --md-sys-color-on-primary: #FFFFFF;
+      --md-sys-color-primary-container: #D3E3FD;
+      --md-sys-color-on-primary-container: #041E49;
+      --md-sys-color-secondary: #4A6FA5;
+      --md-sys-color-on-secondary: #FFFFFF;
+      --md-sys-color-secondary-container: #D8E2F9;
+      --md-sys-color-on-secondary-container: #001945;
+      --md-sys-color-tertiary: #6B5778;
+      --md-sys-color-on-tertiary: #FFFFFF;
+      --md-sys-color-tertiary-container: #F2DAFF;
+      --md-sys-color-on-tertiary-container: #251431;
+      --md-sys-color-error: #B3261E;
+      --md-sys-color-on-error: #FFFFFF;
+      --md-sys-color-error-container: #F9DEDC;
+      --md-sys-color-on-error-container: #410E0B;
+      --md-sys-color-background: #F8F9FA;
+      --md-sys-color-on-background: #1C1B1F;
+      --md-sys-color-surface: #FFFFFF;
+      --md-sys-color-on-surface: #202124;
+      --md-sys-color-surface-variant: #E1E2EC;
+      --md-sys-color-on-surface-variant: #44464F;
+      --md-sys-color-surface-container-lowest: #FFFFFF;
+      --md-sys-color-surface-container-low: #F0F4F9;
+      --md-sys-color-surface-container: #E8EAF6;
+      --md-sys-color-surface-container-high: #E3E5E8;
+      --md-sys-color-surface-container-highest: #DDE1E7;
+      --md-sys-color-outline: #747775;
+      --md-sys-color-outline-variant: #C4C7C5;
+      --md-sys-color-inverse-surface: #313033;
+      --md-sys-color-inverse-on-surface: #F4EFF4;
+      --md-sys-color-inverse-primary: #A8C7FA;
+      --md-sys-color-scrim: #000000;
+
+      --motion-easing-standard: cubic-bezier(0.2, 0.0, 0, 1.0);
+      --motion-easing-enter: cubic-bezier(0.05, 0.7, 0.1, 1.0);
+      --motion-easing-exit: cubic-bezier(0.3, 0.0, 0.8, 0.15);
+      --motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1.0);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --md-sys-color-primary: #A8C7FA;
+        --md-sys-color-on-primary: #062E6F;
+        --md-sys-color-primary-container: #0842A0;
+        --md-sys-color-on-primary-container: #D3E3FD;
+        --md-sys-color-secondary: #A8C8F9;
+        --md-sys-color-on-secondary: #003071;
+        --md-sys-color-secondary-container: #264777;
+        --md-sys-color-on-secondary-container: #D6E3FF;
+        --md-sys-color-tertiary: #D6BEEA;
+        --md-sys-color-on-tertiary: #3B2948;
+        --md-sys-color-tertiary-container: #523F5F;
+        --md-sys-color-on-tertiary-container: #F2DAFF;
+        --md-sys-color-error: #F2B8B5;
+        --md-sys-color-on-error: #601410;
+        --md-sys-color-error-container: #8C1D18;
+        --md-sys-color-on-error-container: #F9DEDC;
+        --md-sys-color-background: #111114;
+        --md-sys-color-on-background: #E2E2E6;
+        --md-sys-color-surface: #111114;
+        --md-sys-color-on-surface: #E2E2E6;
+        --md-sys-color-surface-variant: #44474E;
+        --md-sys-color-on-surface-variant: #C4C6D0;
+        --md-sys-color-surface-container-lowest: #0C0C0F;
+        --md-sys-color-surface-container-low: #1C1B1F;
+        --md-sys-color-surface-container: #201F23;
+        --md-sys-color-surface-container-high: #2B2A2E;
+        --md-sys-color-surface-container-highest: #36343A;
+        --md-sys-color-outline: #8E918F;
+        --md-sys-color-outline-variant: #444746;
+        --md-sys-color-inverse-surface: #E2E2E6;
+        --md-sys-color-inverse-on-surface: #2F3033;
+        --md-sys-color-inverse-primary: #1A73E8;
+        --md-sys-color-scrim: #000000;
+      }
+    }
+
+    /* ── Material Symbols ── */
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 24px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--md-ref-typeface-plain);
+      background: var(--md-sys-color-background);
+      color: var(--md-sys-color-on-surface);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ── Focus ── */
+    :focus-visible {
+      outline: 3px solid var(--md-sys-color-primary);
+      outline-offset: 2px;
+    }
+
+    /* ── MWC overrides — expressive mode ── */
+    md-filled-button {
+      --md-filled-button-container-shape: var(--md-sys-shape-corner-full);
+      --md-filled-button-container-color: var(--md-sys-color-primary);
+      --md-filled-button-label-text-color: var(--md-sys-color-on-primary);
+      --md-filled-button-label-text-font: var(--md-ref-typeface-plain);
+      --md-filled-button-label-text-size: 14px;
+      --md-filled-button-label-text-weight: 500;
+    }
+
+    md-outlined-button {
+      --md-outlined-button-container-shape: var(--md-sys-shape-corner-full);
+      --md-outlined-button-label-text-font: var(--md-ref-typeface-plain);
+      --md-outlined-button-label-text-size: 14px;
+      --md-outlined-button-label-text-weight: 500;
+    }
+
+    md-text-button {
+      --md-text-button-container-shape: var(--md-sys-shape-corner-full);
+      --md-text-button-label-text-font: var(--md-ref-typeface-plain);
+      --md-text-button-label-text-size: 14px;
+      --md-text-button-label-text-weight: 500;
+    }
+
+    md-filled-tonal-button {
+      --md-filled-tonal-button-container-shape: var(--md-sys-shape-corner-full);
+      --md-filled-tonal-button-label-text-font: var(--md-ref-typeface-plain);
+      --md-filled-tonal-button-label-text-size: 14px;
+      --md-filled-tonal-button-label-text-weight: 500;
+    }
+
+    md-filter-chip {
+      --md-filter-chip-container-shape: var(--md-sys-shape-corner-full);
+      --md-filter-chip-label-text-font: var(--md-ref-typeface-plain);
+      --md-filter-chip-label-text-weight: 500;
+    }
+
+    /* md-secondary-tab overrides removed — using custom tab bar */
+
+    /* ── Nav ── */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      background: var(--md-sys-color-surface);
+      border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    }
+
+    .nav.scrolled {
+      background: color-mix(in srgb, var(--md-sys-color-surface) 80%, transparent);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .nav-wordmark {
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--md-sys-color-on-surface);
+      flex-shrink: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--md-sys-color-on-surface-variant);
+      text-decoration: none;
+      padding: 8px 4px;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--md-sys-color-surface);
+      padding: 128px 24px 80px;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 24px;
+    }
+
+    .eyebrow-chip {
+      display: inline-flex;
+      align-items: center;
+      height: 32px;
+      padding: 0 16px;
+      border-radius: var(--md-sys-shape-corner-full);
+      background: var(--md-sys-color-secondary-container);
+      color: var(--md-sys-color-on-secondary-container);
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .hero h1 {
+      font-family: var(--md-ref-typeface-brand);
+      font-size: 36px;
+      font-weight: 400;
+      color: var(--md-sys-color-on-surface);
+      line-height: 1.15;
+    }
+
+    .hero-sub {
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--md-sys-color-on-surface-variant);
+      line-height: 1.5;
+      max-width: 560px;
+    }
+
+    .hero-chips {
+      display: grid;
+      grid-template-columns: repeat(3, auto);
+      gap: 12px;
+      justify-content: center;
+      margin-top: 8px;
+    }
+
+    .hero-chips md-filter-chip {
+      --md-filter-chip-container-height: 48px;
+      --md-filter-chip-label-text-size: 14px;
+      --md-filter-chip-outline-color: var(--md-sys-color-outline-variant);
+      --md-filter-chip-label-text-color: var(--md-sys-color-on-surface-variant);
+      --md-filter-chip-selected-container-color: var(--md-sys-color-primary-container);
+      --md-filter-chip-selected-label-text-color: var(--md-sys-color-on-primary-container);
+      --md-filter-chip-selected-outline-color: var(--md-sys-color-primary);
+    }
+
+    .hero-cta {
+      margin-top: 8px;
+    }
+
+    .hero-cta md-filled-button {
+      --md-filled-button-container-height: 48px;
+      --md-filled-button-label-text-size: 16px;
+    }
+
+    .hero-footnote {
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    /* ── Section 2: Use cases ── */
+    .usecases {
+      background: var(--md-sys-color-surface-container-low);
+      padding: 32px 24px 64px;
+    }
+
+    .usecase-grid {
+      max-width: 1040px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 55fr 45fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .usecase-left,
+    .usecase-right {
+      opacity: 1;
+    }
+
+    .uc-label-chip {
+      display: inline-flex;
+      align-items: center;
+      height: 28px;
+      padding: 0 12px;
+      border-radius: var(--md-sys-shape-corner-full);
+      background: var(--md-sys-color-secondary-container);
+      color: var(--md-sys-color-on-secondary-container);
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+
+    .usecase-left h2 {
+      font-family: var(--md-ref-typeface-brand);
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--md-sys-color-on-surface);
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+
+    .usecase-left .uc-body {
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--md-sys-color-on-surface-variant);
+      line-height: 1.5;
+      margin-bottom: 32px;
+    }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      border-radius: 50%;
+      background: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-on-primary-container);
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 12px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+
+    .step-title {
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--md-sys-color-on-surface);
+      margin-bottom: 2px;
+    }
+
+    .step-desc {
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--md-sys-color-on-surface-variant);
+      line-height: 1.4;
+    }
+
+    .model-rec {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .model-rec-label {
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .model-chip {
+      display: inline-flex;
+      align-items: center;
+      height: 28px;
+      padding: 0 12px;
+      border-radius: var(--md-sys-shape-corner-small);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--md-sys-color-on-surface);
+    }
+
+    .model-cost {
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .uc-ctas {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* ── Code card ── */
+    .code-card {
+      background: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--md-sys-shape-corner-large);
+      overflow: hidden;
+    }
+
+    .code-tab-bar {
+      display: flex;
+      border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    }
+
+    .code-tab {
+      flex: 1;
+      background: none;
+      border: none;
+      padding: 12px 16px;
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--md-sys-color-on-surface-variant);
+      cursor: pointer;
+      position: relative;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .code-tab:focus-visible {
+      outline: 3px solid var(--md-sys-color-primary);
+      outline-offset: -3px;
+    }
+
+    .code-tab.active {
+      color: var(--md-sys-color-primary);
+    }
+
+    .code-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--md-sys-color-primary);
+      border-radius: 2px 2px 0 0;
+    }
+
+    .code-wrapper {
+      position: relative;
+      padding: 4px;
+    }
+
+    .code-block {
+      background: #0d1117;
+      border-radius: var(--md-sys-shape-corner-medium);
+      padding: 20px;
+      margin: 0;
+      overflow-x: auto;
+      font-family: var(--md-ref-typeface-mono);
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.6;
+      color: #e6edf3;
+    }
+
+    .code-block code {
+      font-family: inherit;
+      font-size: inherit;
+      white-space: pre;
+    }
+
+    .code-block .kw { color: #FF7B72; }
+    .code-block .str { color: #A5D6FF; }
+    .code-block .fn { color: #D2A8FF; }
+    .code-block .cm { color: #8B949E; }
+
+    .copy-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      --md-icon-button-icon-color: #8B949E;
+      --md-icon-button-container-shape: var(--md-sys-shape-corner-small);
+    }
+
+    .code-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-top: 1px solid var(--md-sys-color-outline-variant);
+    }
+
+    .code-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .code-meta-item .material-symbols-outlined {
+      font-size: 16px;
+      color: var(--md-sys-color-primary);
+    }
+
+    .code-meta-sep {
+      color: var(--md-sys-color-outline-variant);
+    }
+
+    /* ── Section 3: Models ── */
+    .models {
+      background: var(--md-sys-color-surface);
+      padding: 64px 24px;
+    }
+
+    .models-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .models-header h2 {
+      font-family: var(--md-ref-typeface-brand);
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--md-sys-color-on-surface);
+      margin-bottom: 8px;
+    }
+
+    .models-header p {
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .model-filters {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+
+    .model-filters md-filter-chip {
+      --md-filter-chip-selected-container-color: var(--md-sys-color-primary-container);
+      --md-filter-chip-selected-label-text-color: var(--md-sys-color-on-primary-container);
+    }
+
+    .model-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      max-width: 1040px;
+      margin: 0 auto 32px;
+    }
+
+    .model-card {
+      background: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--md-sys-shape-corner-large);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .model-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .provider-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .provider-dot.google { background: var(--md-sys-color-primary); }
+    .provider-dot.google-open { background: var(--md-sys-color-secondary); }
+    .provider-dot.partner { background: var(--md-sys-color-tertiary); }
+
+    .model-card-name {
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--md-sys-color-on-surface);
+    }
+
+    .model-card-desc {
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--md-sys-color-on-surface-variant);
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .model-card-footer {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .model-tag {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 10px;
+      border-radius: var(--md-sys-shape-corner-small);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .model-card-link {
+      margin-left: auto;
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--md-sys-color-primary);
+      text-decoration: none;
+      padding: 8px 0;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+    }
+
+    .all-models-link {
+      display: block;
+      text-align: center;
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--md-sys-color-primary);
+      text-decoration: none;
+      padding: 8px;
+      min-height: 48px;
+    }
+
+    /* ── Section 4: Social proof ── */
+    .proof {
+      background: var(--md-sys-color-surface-container-low);
+      padding: 48px 24px;
+    }
+
+    .proof-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    .proof-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .proof-number {
+      font-family: var(--md-ref-typeface-brand);
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--md-sys-color-primary);
+    }
+
+    .proof-label {
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .proof-divider {
+      width: 1px;
+      height: 48px;
+      background: var(--md-sys-color-outline-variant);
+    }
+
+    /* ── Section 5: Final CTA ── */
+    .final-cta {
+      background: var(--md-sys-color-primary-container);
+      padding: 80px 24px;
+      text-align: center;
+    }
+
+    .final-cta h2 {
+      font-family: var(--md-ref-typeface-brand);
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--md-sys-color-on-primary-container);
+      margin-bottom: 12px;
+    }
+
+    .final-cta p {
+      font-family: var(--md-ref-typeface-plain);
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--md-sys-color-on-primary-container);
+      opacity: 0.7;
+      margin-bottom: 32px;
+    }
+
+    .final-cta-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .final-cta .cta-outlined {
+      --md-outlined-button-outline-color: var(--md-sys-color-on-primary-container);
+      --md-outlined-button-label-text-color: var(--md-sys-color-on-primary-container);
+    }
+
+    /* ── Transition utility ── */
+    .fade-content {
+      opacity: 1;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .usecase-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+      .model-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 680px) {
+      .hero-chips {
+        grid-template-columns: 1fr 1fr;
+      }
+      .nav-links {
+        display: none;
+      }
+      .model-grid {
+        grid-template-columns: 1fr;
+      }
+      .proof-row {
+        flex-wrap: wrap;
+        gap: 24px;
+      }
+      .proof-divider {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-chips {
+        grid-template-columns: 1fr;
+      }
+      .hero h1 {
+        font-size: 28px;
+      }
+    }
+
+    /* ── Motion ── */
+    @media (prefers-reduced-motion: no-preference) {
+      .nav {
+        transition: background 200ms var(--motion-easing-standard),
+                    backdrop-filter 200ms var(--motion-easing-standard);
+      }
+      .fade-content {
+        transition: opacity 200ms var(--motion-easing-standard);
+      }
+      .model-card {
+        transition: opacity 200ms var(--motion-easing-standard),
+                    transform 200ms var(--motion-easing-standard);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Nav ── -->
+  <nav class="nav" id="main-nav">
+    <span class="nav-wordmark">Vertex AI</span>
+    <div class="nav-links">
+      <a href="#hero">Use cases</a>
+      <a href="#models">Models</a>
+      <a href="#">Pricing</a>
+      <a href="#">Docs</a>
+    </div>
+    <div class="nav-actions">
+      <md-text-button>Sign in</md-text-button>
+      <md-filled-button>Start free</md-filled-button>
+    </div>
+  </nav>
+
+  <!-- ── Section 1: Hero ── -->
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <span class="eyebrow-chip">200+ models · Free to start</span>
+
+      <h1>What are you<br>trying to build?</h1>
+
+      <p class="hero-sub">
+        Tell us what you're building. We'll show you exactly how to do it
+        with Vertex AI — the right models, the right tools, the right code.
+      </p>
+
+      <div class="hero-chips" id="hero-chips">
+        <md-filter-chip label="I'm building a chatbot" data-uc="chatbot" selected></md-filter-chip>
+        <md-filter-chip label="I'm working with images or video" data-uc="images"></md-filter-chip>
+        <md-filter-chip label="I need to analyze documents" data-uc="documents"></md-filter-chip>
+        <md-filter-chip label="I want to fine-tune a model" data-uc="finetune"></md-filter-chip>
+        <md-filter-chip label="I'm building an AI agent" data-uc="agents"></md-filter-chip>
+        <md-filter-chip label="I need to run evals" data-uc="evals"></md-filter-chip>
+      </div>
+
+      <div class="hero-cta">
+        <md-filled-button id="show-how-btn">Show me how →</md-filled-button>
+      </div>
+
+      <p class="hero-footnote">$300 in free credits. No credit card required.</p>
+    </div>
+  </section>
+
+  <!-- ── Section 2: Use-case deep dive ── -->
+  <section class="usecases" id="usecases">
+    <div class="usecase-grid fade-content" id="usecase-content">
+      <!-- Left column -->
+      <div class="usecase-left">
+        <div class="uc-label-chip" id="uc-label">Chatbot</div>
+        <h2 id="uc-heading">Ship a production chatbot in an afternoon</h2>
+        <p class="uc-body" id="uc-body">
+          Streaming responses, conversation memory, function calling.
+          Gemini handles the hard parts.
+        </p>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div>
+              <div class="step-title" id="step1-title">Install the SDK</div>
+              <div class="step-desc" id="step1-desc">One pip install. Authenticate with your Google Cloud project.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div>
+              <div class="step-title" id="step2-title">Add streaming + memory</div>
+              <div class="step-desc" id="step2-desc">Built-in conversation history. No vector DB required to start.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div>
+              <div class="step-title" id="step3-title">Add tool use</div>
+              <div class="step-desc" id="step3-desc">Let your bot call APIs, query databases, run functions.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="model-rec">
+          <span class="model-rec-label">Recommended model</span>
+          <span class="model-chip" id="uc-model">Gemini 2.0 Flash</span>
+          <span class="model-cost" id="uc-cost">Fast · $0.0001/1K tokens</span>
+        </div>
+
+        <div class="uc-ctas">
+          <md-filled-button>Start this quickstart</md-filled-button>
+          <md-text-button>Browse all models</md-text-button>
+        </div>
+      </div>
+
+      <!-- Right column -->
+      <div class="usecase-right">
+        <div class="code-card">
+          <div class="code-tab-bar" id="code-tabs">
+            <button class="code-tab active" data-tab="0">Install</button>
+            <button class="code-tab" data-tab="1">Configure</button>
+            <button class="code-tab" data-tab="2">Run</button>
+          </div>
+
+          <div class="code-wrapper">
+            <pre class="code-block"><code id="code-display">pip install google-genai</code></pre>
+            <md-icon-button class="copy-btn" id="copy-btn" aria-label="Copy code">
+              <md-icon>content_copy</md-icon>
+            </md-icon-button>
+          </div>
+
+          <div class="code-meta">
+            <span class="code-meta-item">
+              <span class="material-symbols-outlined">check_circle</span>
+              Runs in ~2 min
+            </span>
+            <span class="code-meta-sep">·</span>
+            <span class="code-meta-item">
+              <span class="material-symbols-outlined">check_circle</span>
+              No infrastructure needed
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Section 3: Model selector ── -->
+  <section class="models" id="models">
+    <div class="models-header">
+      <h2>Not sure which model fits?</h2>
+      <p>Filter by what you're building.</p>
+    </div>
+
+    <div class="model-filters" id="model-filters">
+      <md-filter-chip label="All" data-filter="all" selected></md-filter-chip>
+      <md-filter-chip label="Fast" data-filter="fast"></md-filter-chip>
+      <md-filter-chip label="Powerful" data-filter="powerful"></md-filter-chip>
+      <md-filter-chip label="Images" data-filter="images"></md-filter-chip>
+      <md-filter-chip label="Video" data-filter="video"></md-filter-chip>
+      <md-filter-chip label="Open source" data-filter="open-source"></md-filter-chip>
+    </div>
+
+    <div class="model-grid" id="model-grid">
+      <div class="model-card" data-categories="powerful">
+        <div class="model-card-header">
+          <div class="provider-dot google"></div>
+          <span class="model-card-name">Gemini 2.5 Pro</span>
+        </div>
+        <p class="model-card-desc">Most capable model for complex reasoning, code generation, and multimodal understanding.</p>
+        <div class="model-card-footer">
+          <span class="model-tag">Text</span>
+          <span class="model-tag">Powerful</span>
+          <a href="#" class="model-card-link">Try free →</a>
+        </div>
+      </div>
+
+      <div class="model-card" data-categories="fast">
+        <div class="model-card-header">
+          <div class="provider-dot google"></div>
+          <span class="model-card-name">Gemini 2.0 Flash</span>
+        </div>
+        <p class="model-card-desc">Fastest Gemini model. Optimized for high-throughput, low-latency production workloads.</p>
+        <div class="model-card-footer">
+          <span class="model-tag">Text</span>
+          <span class="model-tag">Fast</span>
+          <a href="#" class="model-card-link">Try free →</a>
+        </div>
+      </div>
+
+      <div class="model-card" data-categories="images">
+        <div class="model-card-header">
+          <div class="provider-dot google"></div>
+          <span class="model-card-name">Imagen 4</span>
+        </div>
+        <p class="model-card-desc">State-of-the-art image generation with photorealistic quality and precise prompt adherence.</p>
+        <div class="model-card-footer">
+          <span class="model-tag">Images</span>
+          <span class="model-tag">Balanced</span>
+          <a href="#" class="model-card-link">Try free →</a>
+        </div>
+      </div>
+
+      <div class="model-card" data-categories="video">
+        <div class="model-card-header">
+          <div class="provider-dot google"></div>
+          <span class="model-card-name">Veo 2</span>
+        </div>
+        <p class="model-card-desc">High-quality video generation from text prompts and reference images at production scale.</p>
+        <div class="model-card-footer">
+          <span class="model-tag">Video</span>
+          <span class="model-tag">Balanced</span>
+          <a href="#" class="model-card-link">Try free →</a>
+        </div>
+      </div>
+
+      <div class="model-card" data-categories="fast open-source">
+        <div class="model-card-header">
+          <div class="provider-dot google-open"></div>
+          <span class="model-card-name">Gemma 3</span>
+        </div>
+        <p class="model-card-desc">Open-weight model you can deploy anywhere. Runs on a single GPU with full fine-tuning support.</p>
+        <div class="model-card-footer">
+          <span class="model-tag">Text</span>
+          <span class="model-tag">Open</span>
+          <a href="#" class="model-card-link">Try free →</a>
+        </div>
+      </div>
+
+      <div class="model-card" data-categories="powerful open-source">
+        <div class="model-card-header">
+          <div class="provider-dot partner"></div>
+          <span class="model-card-name">Mistral Large</span>
+        </div>
+        <p class="model-card-desc">Partner model for multilingual reasoning, code generation, and enterprise deployments.</p>
+        <div class="model-card-footer">
+          <span class="model-tag">Text</span>
+          <span class="model-tag">Powerful</span>
+          <a href="#" class="model-card-link">Try free →</a>
+        </div>
+      </div>
+    </div>
+
+    <a href="#" class="all-models-link">See all 200+ models →</a>
+  </section>
+
+  <!-- ── Section 4: Social proof ── -->
+  <section class="proof">
+    <div class="proof-row">
+      <div class="proof-stat">
+        <span class="proof-number">10M+</span>
+        <span class="proof-label">Developers</span>
+      </div>
+      <div class="proof-divider"></div>
+      <div class="proof-stat">
+        <span class="proof-number">200+</span>
+        <span class="proof-label">Models</span>
+      </div>
+      <div class="proof-divider"></div>
+      <div class="proof-stat">
+        <span class="proof-number">&lt;10ms</span>
+        <span class="proof-label">p50 latency</span>
+      </div>
+      <div class="proof-divider"></div>
+      <div class="proof-stat">
+        <span class="proof-number">SOC 2 · HIPAA · GDPR</span>
+        <span class="proof-label">Compliance</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Section 5: Final CTA ── -->
+  <section class="final-cta">
+    <h2>Pick a use case. Get to production.</h2>
+    <p>Every path starts free. $300 in credits, no card required.</p>
+    <div class="final-cta-buttons">
+      <md-filled-button id="choose-uc-btn">Choose my use case</md-filled-button>
+      <md-outlined-button class="cta-outlined" id="talk-btn">Talk to an engineer</md-outlined-button>
+    </div>
+  </section>
+
+
+  <!-- ── Script ── -->
+  <script type="module">
+
+    /* ── Use-case data ── */
+    const useCases = {
+      chatbot: {
+        label: 'Chatbot',
+        heading: 'Ship a production chatbot in an afternoon',
+        body: 'Streaming responses, conversation memory, function calling. Gemini handles the hard parts.',
+        steps: [
+          { title: 'Install the SDK', desc: 'One pip install. Authenticate with your Google Cloud project.' },
+          { title: 'Add streaming + memory', desc: 'Built-in conversation history. No vector DB required to start.' },
+          { title: 'Add tool use', desc: 'Let your bot call APIs, query databases, run functions.' }
+        ],
+        model: 'Gemini 2.0 Flash',
+        cost: 'Fast · $0.0001/1K tokens',
+        code: [
+          { html: 'pip install google-genai', plain: 'pip install google-genai' },
+          {
+            html: `<span class="kw">from</span> google <span class="kw">import</span> genai
+
+client = genai.<span class="fn">Client</span>()
+chat = client.chats.<span class="fn">create</span>(
+    model=<span class="str">"gemini-2.0-flash"</span>
+)`,
+            plain: `from google import genai
+
+client = genai.Client()
+chat = client.chats.create(
+    model="gemini-2.0-flash"
+)`
+          },
+          {
+            html: `response = chat.<span class="fn">send_message</span>(<span class="str">"Hello"</span>)
+<span class="fn">print</span>(response.text)`,
+            plain: `response = chat.send_message("Hello")
+print(response.text)`
+          }
+        ]
+      },
+
+      images: {
+        label: 'Images & video',
+        heading: 'Generate and understand images and video',
+        body: 'Imagen 4 for generation. Gemini for understanding. Veo 2 for video. All in one API.',
+        steps: [
+          { title: 'Pick your modality', desc: 'Generate new images, edit existing ones, or extract insights from video.' },
+          { title: 'Describe what you want', desc: 'Natural language prompts. Reference images optional.' },
+          { title: 'Deploy to production', desc: 'Scale to millions of requests. Batch processing available.' }
+        ],
+        model: 'Imagen 4',
+        cost: 'Balanced · $0.0004/image',
+        code: [
+          { html: 'pip install google-genai', plain: 'pip install google-genai' },
+          {
+            html: `<span class="kw">from</span> google <span class="kw">import</span> genai
+
+client = genai.<span class="fn">Client</span>()
+model = <span class="str">"imagen-4.0-generate-001"</span>`,
+            plain: `from google import genai
+
+client = genai.Client()
+model = "imagen-4.0-generate-001"`
+          },
+          {
+            html: `response = client.models.<span class="fn">generate_images</span>(
+    model=model,
+    prompt=<span class="str">"A serene mountain landscape at sunset"</span>
+)
+image = response.generated_images[0]`,
+            plain: `response = client.models.generate_images(
+    model=model,
+    prompt="A serene mountain landscape at sunset"
+)
+image = response.generated_images[0]`
+          }
+        ]
+      },
+
+      documents: {
+        label: 'Documents',
+        heading: 'Extract meaning from any document at scale',
+        body: 'PDFs, contracts, receipts, reports. Gemini reads them all. Structure the output however you need.',
+        steps: [
+          { title: 'Upload your documents', desc: 'Pass a PDF URL or base64. Up to 1000 pages per request.' },
+          { title: 'Define your schema', desc: 'Tell Gemini what to extract. Get back structured JSON.' },
+          { title: 'Run in batch', desc: 'Process thousands of documents overnight. Pay only for what you use.' }
+        ],
+        model: 'Gemini 2.5 Pro',
+        cost: 'Powerful · $0.0025/1K tokens',
+        code: [
+          { html: 'pip install google-genai', plain: 'pip install google-genai' },
+          {
+            html: `<span class="kw">from</span> google <span class="kw">import</span> genai
+
+client = genai.<span class="fn">Client</span>()`,
+            plain: `from google import genai
+
+client = genai.Client()`
+          },
+          {
+            html: `response = client.models.<span class="fn">generate_content</span>(
+    model=<span class="str">"gemini-2.5-pro"</span>,
+    contents=[
+        document,
+        <span class="str">"Extract all line items as JSON"</span>
+    ]
+)`,
+            plain: `response = client.models.generate_content(
+    model="gemini-2.5-pro",
+    contents=[
+        document,
+        "Extract all line items as JSON"
+    ]
+)`
+          }
+        ]
+      },
+
+      finetune: {
+        label: 'Fine-tuning',
+        heading: 'Fine-tune on your data in hours, not weeks',
+        body: 'Supervised fine-tuning on Gemini. Upload a dataset, set it running, get a model that knows your domain.',
+        steps: [
+          { title: 'Prepare your dataset', desc: 'JSONL format. Prompt/response pairs. As few as 100 examples to start.' },
+          { title: 'Launch tuning', desc: 'One API call. Vertex AI handles the compute, checkpoints, and evaluation.' },
+          { title: 'Deploy your model', desc: 'Your tuned model gets its own endpoint. Same API as the base model.' }
+        ],
+        model: 'Gemini 2.0 Flash (tuned)',
+        cost: 'Balanced · ~$3/1K examples',
+        code: [
+          { html: 'pip install google-cloud-aiplatform', plain: 'pip install google-cloud-aiplatform' },
+          {
+            html: `<span class="kw">from</span> google.cloud <span class="kw">import</span> aiplatform
+
+aiplatform.<span class="fn">init</span>(
+    project=<span class="str">"my-project"</span>,
+    location=<span class="str">"us-central1"</span>
+)`,
+            plain: `from google.cloud import aiplatform
+
+aiplatform.init(
+    project="my-project",
+    location="us-central1"
+)`
+          },
+          {
+            html: `job = aiplatform.<span class="fn">CustomJob.from_local_script</span>(
+    display_name=<span class="str">"gemini-finetune"</span>,
+    script_path=<span class="str">"train.py"</span>,
+)
+job.<span class="fn">run</span>()`,
+            plain: `job = aiplatform.CustomJob.from_local_script(
+    display_name="gemini-finetune",
+    script_path="train.py",
+)
+job.run()`
+          }
+        ]
+      },
+
+      agents: {
+        label: 'Agents',
+        heading: 'Build agents that take action, not just text',
+        body: 'Agents that browse, execute code, call APIs, and hand off to other agents. ADK makes it composable.',
+        steps: [
+          { title: 'Define your tools', desc: 'Python functions become tools. Gemini decides when to call them.' },
+          { title: 'Add memory and state', desc: 'Short-term context built in. Long-term memory with your own store.' },
+          { title: 'Deploy and monitor', desc: 'Vertex AI Agent Engine handles orchestration, scaling, and tracing.' }
+        ],
+        model: 'Gemini 2.5 Pro',
+        cost: 'Powerful · $0.0025/1K tokens',
+        code: [
+          { html: 'pip install google-adk', plain: 'pip install google-adk' },
+          {
+            html: `<span class="kw">from</span> google.adk.agents <span class="kw">import</span> Agent
+
+agent = <span class="fn">Agent</span>(
+    model=<span class="str">"gemini-2.5-pro"</span>,
+    tools=[my_tool]
+)`,
+            plain: `from google.adk.agents import Agent
+
+agent = Agent(
+    model="gemini-2.5-pro",
+    tools=[my_tool]
+)`
+          },
+          {
+            html: `response = agent.<span class="fn">run</span>(
+    <span class="str">"Research and summarize this topic"</span>
+)
+<span class="fn">print</span>(response)`,
+            plain: `response = agent.run(
+    "Research and summarize this topic"
+)
+print(response)`
+          }
+        ]
+      },
+
+      evals: {
+        label: 'Evals',
+        heading: 'Know if your model is actually getting better',
+        body: 'Automated evals across accuracy, safety, and groundedness. Compare models before you ship.',
+        steps: [
+          { title: 'Define your eval set', desc: 'Examples with expected outputs. Upload as a dataset or BigQuery table.' },
+          { title: 'Run evaluation', desc: 'Vertex AI scores each response. Built-in metrics or bring your own.' },
+          { title: 'Compare and decide', desc: 'Side-by-side model comparison. Export results to BigQuery.' }
+        ],
+        model: 'Gemini as judge',
+        cost: 'Flexible · pay per eval',
+        code: [
+          { html: 'pip install google-cloud-aiplatform', plain: 'pip install google-cloud-aiplatform' },
+          {
+            html: `<span class="kw">from</span> vertexai.evaluation <span class="kw">import</span> EvalTask`,
+            plain: `from vertexai.evaluation import EvalTask`
+          },
+          {
+            html: `eval_task = <span class="fn">EvalTask</span>(
+    dataset=my_dataset,
+    metrics=[<span class="str">"rouge"</span>, <span class="str">"coherence"</span>]
+)
+result = eval_task.<span class="fn">evaluate</span>()`,
+            plain: `eval_task = EvalTask(
+    dataset=my_dataset,
+    metrics=["rouge", "coherence"]
+)
+result = eval_task.evaluate()`
+          }
+        ]
+      }
+    };
+
+    /* ── State ── */
+    let currentUseCase = 'chatbot';
+    let currentCodeTab = 0;
+    let currentModelFilter = 'all';
+
+    /* ── DOM refs ── */
+    const ucContent = document.getElementById('usecase-content');
+    const ucLabel = document.getElementById('uc-label');
+    const ucHeading = document.getElementById('uc-heading');
+    const ucBody = document.getElementById('uc-body');
+    const step1Title = document.getElementById('step1-title');
+    const step1Desc = document.getElementById('step1-desc');
+    const step2Title = document.getElementById('step2-title');
+    const step2Desc = document.getElementById('step2-desc');
+    const step3Title = document.getElementById('step3-title');
+    const step3Desc = document.getElementById('step3-desc');
+    const ucModel = document.getElementById('uc-model');
+    const ucCost = document.getElementById('uc-cost');
+    const codeDisplay = document.getElementById('code-display');
+    const codeTabs = document.getElementById('code-tabs');
+
+    /* ── Update functions ── */
+    function updateCodeDisplay() {
+      const uc = useCases[currentUseCase];
+      codeDisplay.innerHTML = uc.code[currentCodeTab].html;
+    }
+
+    function updateUseCaseContent() {
+      const uc = useCases[currentUseCase];
+      ucLabel.textContent = uc.label;
+      ucHeading.textContent = uc.heading;
+      ucBody.textContent = uc.body;
+      step1Title.textContent = uc.steps[0].title;
+      step1Desc.textContent = uc.steps[0].desc;
+      step2Title.textContent = uc.steps[1].title;
+      step2Desc.textContent = uc.steps[1].desc;
+      step3Title.textContent = uc.steps[2].title;
+      step3Desc.textContent = uc.steps[2].desc;
+      ucModel.textContent = uc.model;
+      ucCost.textContent = uc.cost;
+      currentCodeTab = 0;
+      updateCodeDisplay();
+    }
+
+    function selectUseCase(key) {
+      if (key === currentUseCase) return;
+      currentUseCase = key;
+
+      /* Fade transition */
+      ucContent.style.opacity = '0';
+      setTimeout(() => {
+        updateUseCaseContent();
+        /* Reset tabs to first */
+        codeTabs.querySelectorAll('.code-tab').forEach((t, i) => {
+          t.classList.toggle('active', i === 0);
+        });
+        ucContent.style.opacity = '1';
+      }, 200);
+    }
+
+    function filterModels(category) {
+      currentModelFilter = category;
+      const cards = document.querySelectorAll('.model-card');
+      cards.forEach(card => {
+        const cats = card.dataset.categories.split(' ');
+        const show = category === 'all' || cats.includes(category);
+        if (show) {
+          card.style.display = '';
+          requestAnimationFrame(() => { card.style.opacity = '1'; });
+        } else {
+          card.style.opacity = '0';
+          setTimeout(() => { card.style.display = 'none'; }, 200);
+        }
+      });
+    }
+
+    async function copyCode() {
+      const uc = useCases[currentUseCase];
+      const plain = uc.code[currentCodeTab].plain;
+      try {
+        await navigator.clipboard.writeText(plain);
+        const btn = document.getElementById('copy-btn');
+        const icon = btn.querySelector('md-icon');
+        icon.textContent = 'check';
+        setTimeout(() => { icon.textContent = 'content_copy'; }, 1500);
+      } catch (e) {
+        /* clipboard write may fail in some contexts */
+      }
+    }
+
+    /* ── Event setup ── */
+    function setup() {
+
+      /* Nav scroll */
+      const nav = document.getElementById('main-nav');
+      window.addEventListener('scroll', () => {
+        nav.classList.toggle('scrolled', window.scrollY > 8);
+      }, { passive: true });
+
+      /* Hero chip selection */
+      const heroChips = document.querySelectorAll('#hero-chips md-filter-chip');
+      heroChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          requestAnimationFrame(() => {
+            heroChips.forEach(c => { c.selected = c === chip; });
+            selectUseCase(chip.dataset.uc);
+          });
+        });
+      });
+
+      /* Code tabs */
+      codeTabs.querySelectorAll('.code-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          codeTabs.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          currentCodeTab = parseInt(tab.dataset.tab);
+          updateCodeDisplay();
+        });
+      });
+
+      /* Copy button */
+      document.getElementById('copy-btn').addEventListener('click', copyCode);
+
+      /* Model filter chips */
+      const filterChips = document.querySelectorAll('#model-filters md-filter-chip');
+      filterChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          requestAnimationFrame(() => {
+            filterChips.forEach(c => { c.selected = c === chip; });
+            filterModels(chip.dataset.filter);
+          });
+        });
+      });
+
+      /* Scroll buttons */
+      document.getElementById('show-how-btn').addEventListener('click', () => {
+        document.getElementById('usecases').scrollIntoView({ behavior: 'smooth' });
+      });
+
+      document.getElementById('choose-uc-btn').addEventListener('click', () => {
+        document.getElementById('hero').scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+
+    /* Wait for MWC to load, then init */
+    if (customElements.get('md-filled-button')) {
+      setup();
+    } else {
+      customElements.whenDefined('md-filled-button').then(setup);
+    }
+
+  </script>
+</body>
+</html>
